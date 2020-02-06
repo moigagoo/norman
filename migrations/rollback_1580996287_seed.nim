@@ -9,8 +9,11 @@ db("test.db", "", "", ""):
 
     Pet* = object
       ownerId* {.fk: Person.}: int
-      name*: string
-      age*: Natural
+
 
 withDb:
-  addColumn Pet.age
+  for person in mitems(getAll Person):
+    delete person
+
+  for pet in mitems(getAll Pet):
+    delete pet

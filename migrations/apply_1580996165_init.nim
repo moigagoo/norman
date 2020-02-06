@@ -10,5 +10,6 @@ db("test.db", "", "", ""):
     Pet* = object
       ownerId* {.fk: Person.}: int
 
+
 withDb:
   createTables(force=true)

@@ -9,6 +9,13 @@ db("test.db", "", "", ""):
 
     Pet* = object
       ownerId* {.fk: Person.}: int
+      name*: string
+
 
 withDb:
-  dropTable Person
+  addColumn Pet.name
+
+  transaction:
+    for pet in mitems getAll(Pet):
+      pet.name = "unnamed"
+      update pet

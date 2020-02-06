@@ -10,12 +10,8 @@ db("test.db", "", "", ""):
     Pet* = object
       ownerId* {.fk: Person.}: int
       name*: string
+      age*: Natural
+
 
 withDb:
-  addColumn Pet.name
-
-withDb:
-  transaction:
-    for pet in mitems getAll(Pet):
-      pet.name = "undefined"
-      update pet
+  addColumn Pet.age

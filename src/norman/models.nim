@@ -1,5 +1,4 @@
 import norm/sqlite
-import models/[person, pet]
 
 
 db("test.db", "", "", ""):
@@ -12,6 +11,3 @@ db("test.db", "", "", ""):
       ownerId* {.fk: Person.}: int
       name*: string
       age*: Natural
-
-
-# dbFromTypes("test.db", "", "", "", [Person, Pet])
