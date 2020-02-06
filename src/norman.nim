@@ -82,4 +82,5 @@ proc gen(msg: string) =
 
   copyFile("src/norman/models.nim", migrationsPath / "apply_$#_$#.nim" % [$ts, slug])
 
+
 dispatchMulti([migrate], [rollback], [gen])
