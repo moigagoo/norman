@@ -73,8 +73,6 @@ proc gen(msg: string) =
     ts = now().toTime().toUnix()
     slug = msg.replace(" ", "_").toLowerAscii()
 
-  copyFile("src/norman/models.nim", migrationsPath / "apply_$#_$#.nim" % [$ts, slug])
-
   var lastMigration: string
 
   for migPath in walkFiles(migrationsPath / "apply_*"):
@@ -82,5 +80,6 @@ proc gen(msg: string) =
 
   copyFile(lastMigration, migrationsPath / "rollback_$#_$#.nim" % [$ts, slug])
 
+  copyFile("src/norman/models.nim", migrationsPath / "apply_$#_$#.nim" % [$ts, slug])
 
 dispatchMulti([migrate], [rollback], [gen])
