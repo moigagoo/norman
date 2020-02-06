@@ -1,5 +1,4 @@
 import norm/sqlite
-import models/[person, pet]
 
 
 db("test.db", "", "", ""):
@@ -11,7 +10,12 @@ db("test.db", "", "", ""):
     Pet* = object
       ownerId* {.fk: Person.}: int
       name*: string
-      age*: Natural
 
+withDb:
+  addColumn Pet.name
 
-# dbFromTypes("test.db", "", "", "", [Person, Pet])
+withDb:
+  transaction:
+    for pet in mitems getAll(Pet):
+      pet.name = "undefined"
+      update pet

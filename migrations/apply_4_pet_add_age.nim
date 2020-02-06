@@ -1,5 +1,4 @@
 import norm/sqlite
-import models/[person, pet]
 
 
 db("test.db", "", "", ""):
@@ -13,5 +12,5 @@ db("test.db", "", "", ""):
       name*: string
       age*: Natural
 
-
-# dbFromTypes("test.db", "", "", "", [Person, Pet])
+withDb:
+  addColumn Pet.age

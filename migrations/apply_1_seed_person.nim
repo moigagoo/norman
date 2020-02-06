@@ -1,5 +1,4 @@
 import norm/sqlite
-import models/[person, pet]
 
 
 db("test.db", "", "", ""):
@@ -10,8 +9,9 @@ db("test.db", "", "", ""):
 
     Pet* = object
       ownerId* {.fk: Person.}: int
-      name*: string
-      age*: Natural
 
-
-# dbFromTypes("test.db", "", "", "", [Person, Pet])
+withDb:
+  transaction:
+    for i in 1..10:
+      var person = Person(name: "Bob " & $i, age: 20+i)
+      insert person
