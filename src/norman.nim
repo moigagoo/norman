@@ -1,4 +1,4 @@
-import os, osproc, strutils, times
+import os, osproc, strutils, times, parsecfg
 
 import cligen
 
@@ -8,10 +8,13 @@ const
   binPath = migrationsPath / "bin"
 
 
-proc migrate() =
+proc compile() =
+  echo "Compile migrations"
+
+proc migrate(compile = false) =
   var migCount, compiledMigCount, appliedMigCount: Natural
 
-  for modulePath in walkFiles(migrationsPath / "apply_*"):
+  for modulePath in walkFiles(migrationsPath / "*.nim"):
     inc migCount
 
   echo "Compiling migrations..."
@@ -20,10 +23,10 @@ proc migrate() =
 
   var cmds: seq[string]
 
-  for modulePath in walkFiles(migrationsPath / "apply_*"):
+  for modulePath in walkFiles(migrationsPath / "*.nim"):
     let (_, name, _) = splitFile modulePath
 
-    cmds.add "nim c --verbosity:0 --hints:off --out:migrations/bin/$# $#" % [name, modulePath]
+    cmds.add "nim c --verbosity:0 --hints:off -d:apply -o:migrations/bin/apply_$# $#" % [name, modulePath]
 
   discard execProcesses(cmds, afterRunEvent = proc(idx: int, p: Process) = (inc compiledMigCount; echo "$#/$#" % [$compiledMigCount, $migCount]))
 
@@ -37,7 +40,7 @@ proc migrate() =
 proc rollback(count: int) =
   var migCount, compiledMigCount, rollbackedMigCount: Natural
 
-  for modulePath in walkFiles(migrationsPath / "rollback_*"):
+  for modulePath in walkFiles(migrationsPath / "*.nim"):
     inc migCount
 
   echo "Compiling migrations..."
@@ -46,10 +49,10 @@ proc rollback(count: int) =
 
   var cmds: seq[string]
 
-  for modulePath in walkFiles(migrationsPath / "rollback_*"):
+  for modulePath in walkFiles(migrationsPath / "*.nim"):
     let (_, name, _) = splitFile modulePath
 
-    cmds.add "nim c --verbosity:0 --hints:off --out:migrations/bin/$# $#" % [name, modulePath]
+    cmds.add "nim c --verbosity:0 --hints:off -d:rollback -o:migrations/bin/rollback_$# $#" % [name, modulePath]
 
   discard execProcesses(cmds, afterRunEvent = proc(idx: int, p: Process) = (inc compiledMigCount; echo "$#/$#" % [$compiledMigCount, $migCount]))
 
@@ -82,5 +85,13 @@ proc gen(msg: string) =
 
   copyFile("src/norman/models.nim", migrationsPath / "apply_$#_$#.nim" % [$ts, slug])
 
+proc init() =
+  echo "Create models.nim or models dir."
 
-dispatchMulti([migrate], [rollback], [gen])
+let
+  conf = loadConfig("norman.nimble")
+  srcDir = conf.getSectionValue("", "srcDir")
+
+echo srcDir
+
+dispatchMulti([migrate], [rollback], [gen], [init], [compile])

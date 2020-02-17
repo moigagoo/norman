@@ -1,7 +1,8 @@
-import norm/sqlite
+import norman/envutils
 
+backendFromEnv()
 
-db("test.db", "", "", ""):
+dbFromEnv:
   type
     Person* = object
       name*: string
