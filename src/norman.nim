@@ -40,7 +40,7 @@ proc apply(compile = false) =
   proc updateCaption() =
     flushFile stdout
     eraseLine()
-    stdout.write &"Applied {compiledMigrationsCount}/{len(cmds)} migrations..."
+    stdout.write &"Applied {appliedMigrationsCount}/{len(cmds)} migrations..."
 
   updateCaption()
 
