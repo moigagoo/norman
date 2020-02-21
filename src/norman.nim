@@ -25,12 +25,9 @@ proc compile() =
 
   discard execProcesses(cmds, afterRunEvent = proc(i: int, p: Process) = (inc compiledMigrationsCount; updateCaption()))
 
-  stdout.write " " & "Done!"
+  echo " " & "Done!"
 
-proc apply(compile = false) =
-  if compile:
-    compile()
-
+proc apply() =
   var appliedMigrationsCount: Natural
 
   let bins = collect(newSeq):
@@ -49,7 +46,7 @@ proc apply(compile = false) =
     inc appliedMigrationsCount
     updateCaption()
 
-  stdout.write " " & "Done!"
+  echo " " & "Done!"
 
 # proc migrate(compile = false) =
 #   var migCount, compiledMigCount, appliedMigCount: Natural
