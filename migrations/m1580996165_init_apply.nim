@@ -1,4 +1,9 @@
-import norman/envutils
+when defined(verbose):
+  import logging
+
+  addHandler newConsoleLogger()
+
+import normanpkg/envutils
 
 backendFromEnv()
 
@@ -10,5 +15,6 @@ dbFromEnv:
 
     Pet* = object
       ownerId* {.fk: Person.}: int
-      name*: string
-      age*: Natural
+
+withDb:
+  createTables(force=true)

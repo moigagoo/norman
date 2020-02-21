@@ -10,7 +10,6 @@ binDir        = "bin"
 bin           = @["norman"]
 
 
-
 # Dependencies
 
-requires "nim >= 1.0.6", "norm#head", "cligen"
+requires "nim >= 1.0.6", "norm#head", "cligen", "progress", "spinny"

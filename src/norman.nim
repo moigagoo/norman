@@ -1,97 +1,136 @@
-import os, osproc, strutils, times, parsecfg
+import os, osproc, strformat, sugar, terminal
 
 import cligen
 
 
 const
-  migrationsPath = "migrations"
-  binPath = migrationsPath / "bin"
+  migrationsDir = "migrations"
+  compiledMigrationsDir = migrationsDir / "bin"
+  compilationCmd = &"nim c --verbosity:0 --hints:off --outdir:{compiledMigrationsDir} "
 
 
 proc compile() =
-  echo "Compile migrations"
+  var compiledMigrationsCount: Natural
 
-proc migrate(compile = false) =
-  var migCount, compiledMigCount, appliedMigCount: Natural
+  let cmds = collect(newSeq):
+    for path in walkFiles(migrationsDir / "*.nim"):
+      compilationCmd & path
 
-  for modulePath in walkFiles(migrationsPath / "*.nim"):
-    inc migCount
+  proc updateCaption() =
+    flushFile stdout
+    eraseLine()
+    stdout.write &"Compiled {compiledMigrationsCount}/{len(cmds)} migrations..."
 
-  echo "Compiling migrations..."
+  updateCaption()
 
-  createDir binPath
+  discard execProcesses(cmds, afterRunEvent = proc(i: int, p: Process) = (inc compiledMigrationsCount; updateCaption()))
 
-  var cmds: seq[string]
+  stdout.write " " & "Done!"
 
-  for modulePath in walkFiles(migrationsPath / "*.nim"):
-    let (_, name, _) = splitFile modulePath
+proc apply(compile = false) =
+  if compile:
+    compile()
 
-    cmds.add "nim c --verbosity:0 --hints:off -d:apply -o:migrations/bin/apply_$# $#" % [name, modulePath]
+  var appliedMigrationsCount: Natural
 
-  discard execProcesses(cmds, afterRunEvent = proc(idx: int, p: Process) = (inc compiledMigCount; echo "$#/$#" % [$compiledMigCount, $migCount]))
+  let bins = collect(newSeq):
+    for path in walkFiles(compiledMigrationsDir / "*_apply*"):
+      path
 
-  echo "Applying migrations..."
+  proc updateCaption() =
+    flushFile stdout
+    eraseLine()
+    stdout.write &"Applied {compiledMigrationsCount}/{len(cmds)} migrations..."
 
-  for binName in walkFiles(binPath / "apply_*"):
-    discard execProcess binName
-    inc appliedMigCount
-    echo "$#/$#: $#" % [$appliedMigCount, $migCount, binName]
+  updateCaption()
 
-proc rollback(count: int) =
-  var migCount, compiledMigCount, rollbackedMigCount: Natural
+  for bin in bins:
+    discard execProcess bin
+    inc appliedMigrationsCount
+    updateCaption()
 
-  for modulePath in walkFiles(migrationsPath / "*.nim"):
-    inc migCount
+  stdout.write " " & "Done!"
 
-  echo "Compiling migrations..."
+# proc migrate(compile = false) =
+#   var migCount, compiledMigCount, appliedMigCount: Natural
 
-  createDir binPath
+#   for modulePath in walkFiles(migrationsDir / "*.nim"):
+#     inc migCount
 
-  var cmds: seq[string]
+#   echo "Compiling migrations..."
 
-  for modulePath in walkFiles(migrationsPath / "*.nim"):
-    let (_, name, _) = splitFile modulePath
+#   createDir compiledMigrationsDir
 
-    cmds.add "nim c --verbosity:0 --hints:off -d:rollback -o:migrations/bin/rollback_$# $#" % [name, modulePath]
+#   var cmds: seq[string]
 
-  discard execProcesses(cmds, afterRunEvent = proc(idx: int, p: Process) = (inc compiledMigCount; echo "$#/$#" % [$compiledMigCount, $migCount]))
+#   for modulePath in walkFiles(migrationsDir / "*.nim"):
+#     let (_, name, _) = splitFile modulePath
 
-  echo "Rolling back migrations..."
+#     cmds.add "nim c --verbosity:0 --hints:off -d:apply -o:migrations/bin/apply_$# $#" % [name, modulePath]
 
-  cmds.setLen 0
+#   var bar = newProgressBar(total = migCount)
+#   start bar
 
-  for binName in walkFiles(binPath / "rollback_*"):
-    cmds.insert(binName, 0)
+#   discard execProcesses(cmds, afterRunEvent = proc(idx: int, p: Process) = (increment bar))
 
-  for cmd in cmds:
-    discard execProcess cmd
-    inc rollbackedMigCount
-    echo "$#/$#; $#" % [$rollbackedMigCount, $migCount, cmd]
+#   finish bar
 
-    if count > 0 and rollbackedMigCount == count:
-      break
+#   echo "Applying migrations..."
 
-proc gen(msg: string) =
-  let
-    ts = now().toTime().toUnix()
-    slug = msg.replace(" ", "_").toLowerAscii()
+#   for binName in walkFiles(compiledMigrationsDir / "apply_*"):
+#     discard execProcess binName
+#     inc appliedMigCount
+#     echo "$#/$#: $#" % [$appliedMigCount, $migCount, binName]
 
-  var lastMigration: string
+# proc rollback(count: int) =
+#   var migCount, compiledMigCount, rollbackedMigCount: Natural
 
-  for migPath in walkFiles(migrationsPath / "apply_*"):
-    lastMigration = migPath
+#   for modulePath in walkFiles(migrationsDir / "*.nim"):
+#     inc migCount
 
-  copyFile(lastMigration, migrationsPath / "rollback_$#_$#.nim" % [$ts, slug])
+#   echo "Compiling migrations..."
 
-  copyFile("src/norman/models.nim", migrationsPath / "apply_$#_$#.nim" % [$ts, slug])
+#   createDir compiledMigrationsDir
 
-proc init() =
-  echo "Create models.nim or models dir."
+#   var cmds: seq[string]
 
-let
-  conf = loadConfig("norman.nimble")
-  srcDir = conf.getSectionValue("", "srcDir")
+#   for modulePath in walkFiles(migrationsDir / "*.nim"):
+#     let (_, name, _) = splitFile modulePath
 
-echo srcDir
+#     cmds.add "nim c --verbosity:0 --hints:off -d:rollback -o:migrations/bin/rollback_$# $#" % [name, modulePath]
 
-dispatchMulti([migrate], [rollback], [gen], [init], [compile])
+#   discard execProcesses(cmds, afterRunEvent = proc(idx: int, p: Process) = (inc compiledMigCount; echo "$#/$#" % [$compiledMigCount, $migCount]))
+
+#   echo "Rolling back migrations..."
+
+#   cmds.setLen 0
+
+#   for binName in walkFiles(compiledMigrationsDir / "rollback_*"):
+#     cmds.insert(binName, 0)
+
+#   for cmd in cmds:
+#     discard execProcess cmd
+#     inc rollbackedMigCount
+#     echo "$#/$#; $#" % [$rollbackedMigCount, $migCount, cmd]
+
+#     if count > 0 and rollbackedMigCount == count:
+#       break
+
+# proc generate(msg: string) =
+#   let
+#     ts = utc now()
+#     slug = msg.replace(" ", "_").toLowerAscii()
+
+#   var lastMigration: string
+
+#   for migPath in walkFiles(migrationsDir / "apply_*"):
+#     lastMigration = migPath
+
+#   copyFile(lastMigration, migrationsDir / "rollback_$#_$#.nim" % [$ts, slug])
+
+#   copyFile("src/norman/models.nim", migrationsDir / "apply_$#_$#.nim" % [$ts, slug])
+
+# proc init() =
+#   echo "Create models.nim or models dir."
+
+dispatchMulti([compile], [apply])
