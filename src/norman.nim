@@ -1,4 +1,4 @@
-import os, osproc, strformat, sugar, terminal
+import os, osproc, strformat, sugar, terminal, algorithm
 
 import cligen
 
@@ -48,36 +48,31 @@ proc apply() =
 
   echo " " & "Done!"
 
-# proc migrate(compile = false) =
-#   var migCount, compiledMigCount, appliedMigCount: Natural
+proc rollback(count: Natural = 1, all = false) =
+  var rollbackedMigrationsCount: Natural
 
-#   for modulePath in walkFiles(migrationsDir / "*.nim"):
-#     inc migCount
+  var bins = collect(newSeq):
+    for path in walkFiles(compiledMigrationsDir / "*_rollback*"):
+      path
 
-#   echo "Compiling migrations..."
+  reverse bins
 
-#   createDir compiledMigrationsDir
+  if not all:
+    bins = bins[0..<count]
 
-#   var cmds: seq[string]
+  proc updateCaption() =
+    flushFile stdout
+    eraseLine()
+    stdout.write &"Rollbacked {rollbackedMigrationsCount}/{len(bins)} migrations..."
 
-#   for modulePath in walkFiles(migrationsDir / "*.nim"):
-#     let (_, name, _) = splitFile modulePath
+  updateCaption()
 
-#     cmds.add "nim c --verbosity:0 --hints:off -d:apply -o:migrations/bin/apply_$# $#" % [name, modulePath]
+  for bin in bins:
+    discard execCmd bin
+    inc rollbackedMigrationsCount
+    updateCaption()
 
-#   var bar = newProgressBar(total = migCount)
-#   start bar
-
-#   discard execProcesses(cmds, afterRunEvent = proc(idx: int, p: Process) = (increment bar))
-
-#   finish bar
-
-#   echo "Applying migrations..."
-
-#   for binName in walkFiles(compiledMigrationsDir / "apply_*"):
-#     discard execProcess binName
-#     inc appliedMigCount
-#     echo "$#/$#: $#" % [$appliedMigCount, $migCount, binName]
+  echo " " & "Done!"
 
 # proc rollback(count: int) =
 #   var migCount, compiledMigCount, rollbackedMigCount: Natural
@@ -130,4 +125,4 @@ proc apply() =
 # proc init() =
 #   echo "Create models.nim or models dir."
 
-dispatchMulti([compile], [apply])
+dispatchMulti([compile], [apply], [rollback])
