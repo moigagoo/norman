@@ -1,8 +1,9 @@
-when defined(verbose):
-  import logging
+# Apply: Add Name, Age to Pet
+# Generated: 2020-02-22T17:29:08+04:00
 
-  addHandler newConsoleLogger()
+# Models
 
+# src\normanpkg\models.nim
 import normanpkg/envutils
 
 backendFromEnv()
@@ -17,6 +18,9 @@ dbFromEnv:
       ownerId* {.fk: Person.}: int
       name*: string
       age*: Natural
+
+
+# Migration
 
 withDb:
   transaction:

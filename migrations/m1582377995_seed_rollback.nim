@@ -1,8 +1,9 @@
-when defined(verbose):
-  import logging
+# Rollback: Seed
+# Generated: 2020-02-22T17:26:35+04:00
 
-  addHandler newConsoleLogger()
+# Models
 
+# src\normanpkg\models.nim
 import normanpkg/envutils
 
 backendFromEnv()
@@ -16,16 +17,18 @@ dbFromEnv:
     Pet* = object
       ownerId* {.fk: Person.}: int
 
+
+# Migration
+
 withDb:
   transaction:
-    var pets = getAll Pet
+    var
+      pets = getAll Pet
+      persons = getAll Person
 
     for i in 0..high(pets):
       var pet = pets[i]
       delete pet
-
-  transaction:
-    var persons = getAll Person
 
     for i in 0..high(persons):
       var person = persons[i]

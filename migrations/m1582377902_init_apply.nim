@@ -1,8 +1,9 @@
-when defined(verbose):
-  import logging
+# Apply: Init
+# Generated: 2020-02-22T17:25:02+04:00
 
-  addHandler newConsoleLogger()
+# Models
 
+# src\normanpkg\models.nim
 import normanpkg/envutils
 
 backendFromEnv()
@@ -16,5 +17,9 @@ dbFromEnv:
     Pet* = object
       ownerId* {.fk: Person.}: int
 
+
+# Migration
+
 withDb:
-  createTables(force=true)
+  transaction:
+    createTables()

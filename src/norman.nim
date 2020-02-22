@@ -1,4 +1,4 @@
-import os, osproc, strformat, sugar, terminal, algorithm
+import os, osproc, strutils, strformat, times, sugar, terminal, algorithm, parsecfg
 
 import cligen
 
@@ -74,55 +74,107 @@ proc rollback(count: Natural = 1, all = false) =
 
   echo " " & "Done!"
 
-# proc rollback(count: int) =
-#   var migCount, compiledMigCount, rollbackedMigCount: Natural
+proc generate(message: string) =
+  createDir migrationsDir
 
-#   for modulePath in walkFiles(migrationsDir / "*.nim"):
-#     inc migCount
+  proc slugify(s: string): string =
+    let cleanS = collect(newSeq):
+      for c in s:
+        if c in IdentChars+Whitespace:
+          c
 
-#   echo "Compiling migrations..."
+    cleanS.join().normalize().splitWhitespace().join("_")
 
-#   createDir compiledMigrationsDir
+  let
+    now = now()
+    ts = now.toTime().toUnix()
+    slug = slugify(message)
+    applyMigrationPath = migrationsDir / &"m{ts}_{slug}_apply.nim"
+    rollbackMigrationPath = migrationsDir / &"m{ts}_{slug}_rollback.nim"
 
-#   var cmds: seq[string]
+  var rollbackMigration = &"""
+# Rollback: {message}
+# Generated: {now}
+"""
 
-#   for modulePath in walkFiles(migrationsDir / "*.nim"):
-#     let (_, name, _) = splitFile modulePath
+  var latestApplyMigrationPath: string
 
-#     cmds.add "nim c --verbosity:0 --hints:off -d:rollback -o:migrations/bin/rollback_$# $#" % [name, modulePath]
+  for path in walkFiles(migrationsDir/"*_apply*"):
+    latestApplyMigrationPath = path
 
-#   discard execProcesses(cmds, afterRunEvent = proc(idx: int, p: Process) = (inc compiledMigCount; echo "$#/$#" % [$compiledMigCount, $migCount]))
+  if len(latestApplyMigrationPath) > 0:
+    for line in lines(latestApplyMigrationPath):
+      if line == "# Migration":
+        break
 
-#   echo "Rolling back migrations..."
+      elif line.startsWith("# Apply") or line.startsWith("# Generated"):
+        continue
 
-#   cmds.setLen 0
+      rollbackMigration.add line&"\n"
 
-#   for binName in walkFiles(compiledMigrationsDir / "rollback_*"):
-#     cmds.insert(binName, 0)
+  rollbackMigration.add """
+# Migration
 
-#   for cmd in cmds:
-#     discard execProcess cmd
-#     inc rollbackedMigCount
-#     echo "$#/$#; $#" % [$rollbackedMigCount, $migCount, cmd]
+withDb:
+  transaction:
+    discard "put the migration code here"
+"""
 
-#     if count > 0 and rollbackedMigCount == count:
-#       break
+  rollbackMigrationPath.writeFile rollbackMigration
 
-# proc generate(msg: string) =
-#   let
-#     ts = utc now()
-#     slug = msg.replace(" ", "_").toLowerAscii()
+  var applyMigration = &"""
+# Apply: {message}
+# Generated: {now}
 
-#   var lastMigration: string
+# Models
 
-#   for migPath in walkFiles(migrationsDir / "apply_*"):
-#     lastMigration = migPath
+"""
 
-#   copyFile(lastMigration, migrationsDir / "rollback_$#_$#.nim" % [$ts, slug])
+  var srcDir, pkgName: string
 
-#   copyFile("src/norman/models.nim", migrationsDir / "apply_$#_$#.nim" % [$ts, slug])
+  for path in walkFiles("*.nimble"):
+    pkgName = splitFile(path).name
+
+    srcDir = loadConfig(path).getSectionValue("", "srcDir")
+
+    break
+
+  for path in walkDirs(srcDir/pkgName&"*"):
+    for model in walkFiles(path/"models"/"*.nim"):
+      applyMigration.add &"""
+# {model}
+{readFile(model)}
+"""
+
+    for modelsFile in walkFiles(path/"models.nim"):
+      applyMigration.add &"""
+# {modelsFile}
+{readFile(modelsFile)}
+"""
+
+      break
+
+    break
+
+  applyMigration.add """
+
+# Migration
+
+withDb:
+  transaction:
+    discard "put the migration code here"
+"""
+
+  applyMigrationPath.writeFile applyMigration
+
+  echo &"""
+Generated migrations:
+- {applyMigrationPath}
+- {rollbackMigrationPath}
+
+Edit them to add the actual migration logic."""
 
 # proc init() =
 #   echo "Create models.nim or models dir."
 
-dispatchMulti([compile], [apply], [rollback])
+dispatchMulti([compile], [apply], [rollback], [generate])

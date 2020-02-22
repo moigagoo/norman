@@ -1,8 +1,3 @@
-when defined(verbose):
-  import logging
-
-  addHandler newConsoleLogger()
-
 import normanpkg/envutils
 
 backendFromEnv()
@@ -15,6 +10,5 @@ dbFromEnv:
 
     Pet* = object
       ownerId* {.fk: Person.}: int
-
-withDb:
-  dropUnusedColumns Pet
+      name*: string
+      age*: Natural
