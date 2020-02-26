@@ -7,6 +7,8 @@ const
   migrationsDir = "migrations"
   compiledMigrationsDir = migrationsDir / "bin"
   compilationCmd = &"nim c --verbosity:0 --hints:off --outdir:{compiledMigrationsDir} "
+  modelsDir = "models"
+  modelsFile = "models.nim"
 
 
 proc compile() =
@@ -74,16 +76,22 @@ proc rollback(count: Natural = 1, all = false) =
 
   echo " " & "Done!"
 
-proc generate(message: string) =
-  createDir migrationsDir
-
-  proc slugify(s: string): string =
+proc slugify(s: string): string =
     let cleanS = collect(newSeq):
       for c in s:
         if c in IdentChars+Whitespace:
           c
 
     cleanS.join().normalize().splitWhitespace().join("_")
+
+proc genApplyMigration(): string =
+  discard
+
+proc genRollbackMigration(): string =
+  discard
+
+proc generate(message: string) =
+  createDir migrationsDir
 
   let
     now = now()
@@ -140,13 +148,13 @@ withDb:
     break
 
   for path in walkDirs(srcDir/pkgName&"*"):
-    for model in walkFiles(path/"models"/"*.nim"):
+    for model in walkFiles(path/modelsDir/"*.nim"):
       applyMigration.add &"""
 # {model}
 {readFile(model)}
 """
 
-    for modelsFile in walkFiles(path/"models.nim"):
+    for modelsFile in walkFiles(path/modelsFile):
       applyMigration.add &"""
 # {modelsFile}
 {readFile(modelsFile)}
