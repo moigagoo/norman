@@ -5,11 +5,11 @@ author        = "Constantine Molchanov"
 description   = "Migration manager for Norm."
 license       = "MIT"
 srcDir        = "src"
-installExt    = @["nim"]
+installExt    = @["nim", "nims"]
 binDir        = "bin"
 bin           = @["norman"]
 
 
 # Dependencies
 
-requires "nim >= 1.1.0", "norm#head", "cligen", "progress", "spinny"
+requires "nim >= 1.1.0", "norm#head", "cligen"

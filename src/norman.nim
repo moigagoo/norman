@@ -1,188 +1,65 @@
-import os, osproc, strutils, strformat, times, sugar, terminal, algorithm, parsecfg
+## Norman, a migration manager for Norm.
+
+import strformat
+import os, osproc
+import parsecfg
 
 import cligen
 
 
 const
-  migrationsDir = "migrations"
-  compiledMigrationsDir = migrationsDir / "bin"
-  compilationCmd = &"nim c --verbosity:0 --hints:off --outdir:{compiledMigrationsDir} "
-  modelsDir = "models"
-  modelsFile = "models.nim"
+  mgrDir = "migrations"
+  binDir = "bin"
+  cmplCmd = &"nim c --verbosity:0 --hints:off --outdir:{mgrDir/binDir}"
+  mgrFile = "migration.nim"
+  mdlDir = "models"
+  mdlFile = "models.nim"
+  cfgFile = "config.nims"
+  tmplDir = "normanpkg" / "private"/ "templates"
+  mdlTmpl = staticRead(tmplDir/mdlFile)
+  cfgTmpl = staticRead(tmplDir/cfgFile)
 
 
-proc compile() =
-  var compiledMigrationsCount: Natural
-
-  let cmds = collect(newSeq):
-    for path in walkFiles(migrationsDir / "*.nim"):
-      compilationCmd & path
-
-  proc updateCaption() =
-    flushFile stdout
-    eraseLine()
-    stdout.write &"Compiled {compiledMigrationsCount}/{len(cmds)} migrations..."
-
-  updateCaption()
-
-  discard execProcesses(cmds, afterRunEvent = proc(i: int, p: Process) = (inc compiledMigrationsCount; updateCaption()))
-
-  echo " " & "Done!"
-
-proc apply() =
-  var appliedMigrationsCount: Natural
-
-  let bins = collect(newSeq):
-    for path in walkFiles(compiledMigrationsDir / "*_apply*"):
-      path
-
-  proc updateCaption() =
-    flushFile stdout
-    eraseLine()
-    stdout.write &"Applied {appliedMigrationsCount}/{len(bins)} migrations..."
-
-  updateCaption()
-
-  for bin in bins:
-    discard execProcess bin
-    inc appliedMigrationsCount
-    updateCaption()
-
-  echo " " & "Done!"
-
-proc rollback(count: Natural = 1, all = false) =
-  var rollbackedMigrationsCount: Natural
-
-  var bins = collect(newSeq):
-    for path in walkFiles(compiledMigrationsDir / "*_rollback*"):
-      path
-
-  reverse bins
-
-  if not all:
-    bins = bins[0..<count]
-
-  proc updateCaption() =
-    flushFile stdout
-    eraseLine()
-    stdout.write &"Rollbacked {rollbackedMigrationsCount}/{len(bins)} migrations..."
-
-  updateCaption()
-
-  for bin in bins:
-    discard execCmd bin
-    inc rollbackedMigrationsCount
-    updateCaption()
-
-  echo " " & "Done!"
-
-proc slugify(s: string): string =
-    let cleanS = collect(newSeq):
-      for c in s:
-        if c in IdentChars+Whitespace:
-          c
-
-    cleanS.join().normalize().splitWhitespace().join("_")
-
-proc genApplyMigration(): string =
-  discard
-
-proc genRollbackMigration(): string =
-  discard
-
-proc generate(message: string) =
-  createDir migrationsDir
-
-  let
-    now = now()
-    ts = now.toTime().toUnix()
-    slug = slugify(message)
-    applyMigrationPath = migrationsDir / &"m{ts}_{slug}_apply.nim"
-    rollbackMigrationPath = migrationsDir / &"m{ts}_{slug}_rollback.nim"
-
-  var rollbackMigration = &"""
-# Rollback: {message}
-# Generated: {now}
-"""
-
-  var latestApplyMigrationPath: string
-
-  for path in walkFiles(migrationsDir/"*_apply*"):
-    latestApplyMigrationPath = path
-
-  if len(latestApplyMigrationPath) > 0:
-    for line in lines(latestApplyMigrationPath):
-      if line == "# Migration":
-        break
-
-      elif line.startsWith("# Apply") or line.startsWith("# Generated"):
-        continue
-
-      rollbackMigration.add line&"\n"
-
-  rollbackMigration.add """
-# Migration
-
-withDb:
-  transaction:
-    discard "put the migration code here"
-"""
-
-  rollbackMigrationPath.writeFile rollbackMigration
-
-  var applyMigration = &"""
-# Apply: {message}
-# Generated: {now}
-
-# Models
-
-"""
-
-  var srcDir, pkgName: string
+proc findNimbleFile(): string =
+  ## Find the .nimble file in the current directory and return the path to it.
 
   for path in walkFiles("*.nimble"):
-    pkgName = splitFile(path).name
+    return path
 
-    srcDir = loadConfig(path).getSectionValue("", "srcDir")
+proc init() =
+  ## Init model structure.
 
-    break
+  let nimbleFile = findNimbleFile()
 
-  for path in walkDirs(srcDir/pkgName&"*"):
-    for model in walkFiles(path/modelsDir/"*.nim"):
-      applyMigration.add &"""
-# {model}
-{readFile(model)}
-"""
+  if len(nimbleFile) == 0:
+    quit(".nimble file not found")
 
-    for modelsFile in walkFiles(path/modelsFile):
-      applyMigration.add &"""
-# {modelsFile}
-{readFile(modelsFile)}
-"""
+  let
+    srcDir = loadConfig(nimbleFile).getSectionValue("", "srcDir")
+    pkgDir = srcDir / splitFile(nimbleFile).name
 
-      break
+  createDir(pkgDir)
 
-    break
+  (pkgDir/mdlFile).writeFile mdlTmpl
 
-  applyMigration.add """
+  echo &"Models file created in {pkgDir/mdlFile}."
 
-# Migration
+  createDir(pkgDir/mdlDir)
 
-withDb:
-  transaction:
-    discard "put the migration code here"
-"""
+  echo &"Models directory created in {pkgDir/mdlDir}."
 
-  applyMigrationPath.writeFile applyMigration
+  cfgFile.writeFile cfgTmpl
 
-  echo &"""
-Generated migrations:
-- {applyMigrationPath}
-- {rollbackMigrationPath}
+  echo &"Config file created in {cfgFile}."
 
-Edit them to add the actual migration logic."""
+proc apply(verbose = false) =
+  ## Apply migrations.
 
-# proc init() =
-#   echo "Create models.nim or models dir."
+  for dir in walkDirs(mgrDir/"*"):
+    if splitPath(dir).tail != binDir:
+      echo dir / mgrFile
+      echo dir / mdlFile
+      echo dir / mdlDir
 
-dispatchMulti([compile], [apply], [rollback], [generate])
+when isMainModule:
+  dispatchMulti([init], [apply])
