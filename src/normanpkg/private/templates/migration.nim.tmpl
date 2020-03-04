@@ -1,0 +1,17 @@
+import normanpkg/sugar
+
+
+apply:
+  import models
+
+  withDb:
+    transaction:
+      discard
+
+
+rollback:
+  import $#
+
+  withDb:
+    transaction:
+      discard

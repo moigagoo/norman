@@ -1,59 +1,65 @@
 ## Norman, a migration manager for Norm.
 
-import strformat
+import strutils
 import os, osproc
 import parsecfg
+import times
 
 import cligen
 
-
-const
-  mgrDir = "migrations"
-  binDir = "bin"
-  cmplCmd = &"nim c --verbosity:0 --hints:off --outdir:{mgrDir/binDir}"
-  mgrFile = "migration.nim"
-  mdlDir = "models"
-  mdlFile = "models.nim"
-  cfgFile = "config.nims"
-  tmplDir = "normanpkg" / "private"/ "templates"
-  mdlTmpl = staticRead(tmplDir/mdlFile)
-  cfgTmpl = staticRead(tmplDir/cfgFile)
+import normanpkg/private/[consts, utils]
 
 
-proc findNimbleFile(): string =
-  ## Find the .nimble file in the current directory and return the path to it.
+var pkgDir: string
 
-  for path in walkFiles("*.nimble"):
-    return path
 
 proc init() =
   ## Init model structure.
-
-  let nimbleFile = findNimbleFile()
-
-  if len(nimbleFile) == 0:
-    quit(".nimble file not found")
-
-  let
-    srcDir = loadConfig(nimbleFile).getSectionValue("", "srcDir")
-    pkgDir = srcDir / splitFile(nimbleFile).name
 
   createDir(pkgDir)
 
   (pkgDir/mdlFile).writeFile mdlTmpl
 
-  echo &"Models file created in {pkgDir/mdlFile}."
+  echo "Models file created in $#." % (pkgDir/mdlFile)
 
   createDir(pkgDir/mdlDir)
 
-  echo &"Models directory created in {pkgDir/mdlDir}."
+  echo "Models directory created in $#." % (pkgDir/mdlDir)
 
-  cfgFile.writeFile cfgTmpl
+  cfgFile.writeFile(cfgTmpl)
 
-  echo &"Config file created in {cfgFile}."
+  echo "Config file created in $#." % cfgFile
+
+proc generate(message: string) =
+  ## Generate a migration from the current model state.
+
+  let
+    timestamp = now().toTime().toUnix()
+    slug = slugified message
+    newMgrDir = mgrDir / "$#_$#" % [$timestamp, slug]
+    lstMgr = findLatestMigration()
+    lstMgrImpPath = if len(lstMgr) > 0: '"' & ["..", lstMgr, "models"].join("/") & '"' else: "models"
+
+  createDir(mgrDir)
+
+  createDir(newMgrDir)
+
+  echo "New migration directory created in $#." % (newMgrDir)
+
+  copyFile(pkgDir/mdlFile, newMgrDir/mdlFile)
+
+  copyDir(pkgDir/mdlDir, newMgrDir/mdlDir)
+
+  echo "Current models copied to $# and $#." % [newMgrDir/mdlFile, newMgrDir/mdlDir]
+
+  (newMgrDir/mgrFile).writeFile(mgrTmpl % lstMgrImpPath)
+
+  echo "New migration template created in $#." % (newMgrDir/mgrFile)
 
 proc apply(verbose = false) =
   ## Apply migrations.
+
+  createDir(mgrDir/binDir)
 
   for dir in walkDirs(mgrDir/"*"):
     if splitPath(dir).tail != binDir:
@@ -62,4 +68,16 @@ proc apply(verbose = false) =
       echo dir / mdlDir
 
 when isMainModule:
-  dispatchMulti([init], [apply])
+  let nimbleFile = findNimbleFile()
+
+  if len(nimbleFile) == 0:
+    quit(".nimble file not found. Please run Norman inside a package.")
+
+  let
+    cfg = loadConfig(nimbleFile)
+    srcDir = cfg.getSectionValue("", "srcDir")
+    pkgName = splitFile(nimbleFile).name
+
+  pkgDir = srcDir / pkgName
+
+  dispatchMulti([init], [generate], [apply])
