@@ -22,13 +22,12 @@ proc slugified*(msg: string): string =
 
   msgClean.join().normalize().splitWhitespace().join("_")
 
-proc findLatestMigration*(): string =
-  ## Return the path to the latest migration in the migration folder.
+proc getMgrs*(): seq[string] =
+  ## Get a sorted list of migrations in the migration folder.
 
   let mgrs = collect(newSeq):
     for path in walkDirs(mgrDir/"*"):
-      if (let dirName = splitPath(path).tail; dirName != "bin"):
+      if (let dirName = splitPath(path).tail; dirName != binDir):
         dirName
 
-  if len(mgrs) > 0:
-    result = (sorted mgrs)[^1]
+  sorted mgrs

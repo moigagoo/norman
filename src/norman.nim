@@ -4,6 +4,8 @@ import strutils
 import os, osproc
 import parsecfg
 import times
+import sugar
+import algorithm
 
 import cligen
 
@@ -37,8 +39,11 @@ proc generate(message: string) =
     timestamp = now().toTime().toUnix()
     slug = slugified message
     newMgrDir = mgrDir / "$#_$#" % [$timestamp, slug]
-    lstMgr = findLatestMigration()
-    lstMgrImpPath = if len(lstMgr) > 0: '"' & ["..", lstMgr, "models"].join("/") & '"' else: "models"
+    lstMdlImpPath =
+      if (let mgrs = getMgrs(); len(mgrs) > 0):
+        '"' & "../$#/models" % mgrs[^1] & '"'
+      else:
+        "models"
 
   createDir(mgrDir)
 
@@ -52,7 +57,7 @@ proc generate(message: string) =
 
   echo "Current models copied to $# and $#." % [newMgrDir/mdlFile, newMgrDir/mdlDir]
 
-  (newMgrDir/mgrFile).writeFile(mgrTmpl % lstMgrImpPath)
+  (newMgrDir/mgrFile).writeFile(mgrTmpl % lstMdlImpPath)
 
   echo "New migration template created in $#." % (newMgrDir/mgrFile)
 
@@ -61,11 +66,29 @@ proc apply(verbose = false) =
 
   createDir(mgrDir/binDir)
 
-  for dir in walkDirs(mgrDir/"*"):
-    if splitPath(dir).tail != binDir:
-      echo dir / mgrFile
-      echo dir / mdlFile
-      echo dir / mdlDir
+  var binPaths: seq[string]
+
+  let cmds = collect(newSeq):
+    for mgr in getMgrs():
+      let
+        cacheDirPath = mgrDir / binDir / applyPfx & mgr & cacheSfx
+        binPath = mgrDir / binDir / applyPfx & mgr
+
+      binPaths.add binPath
+
+      [cmplCmd % [cacheDirPath, binPath], (if verbose: verboseFlag else: ""), applyFlag, mgrDir/mgr/mgrFile].join(" ")
+
+  echo cmds
+
+  discard execProcesses cmds
+
+  echo "Compiled $# migrations." % $len(cmds)
+
+  for binPath in sorted binPaths:
+    echo execProcess binPath
+
+  echo "Applied $# migrations." % $len(binPaths)
+
 
 when isMainModule:
   let nimbleFile = findNimbleFile()

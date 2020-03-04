@@ -2,20 +2,27 @@ import os
 
 
 const ## Model structure
-  mdlDir* = "models"
   mdlFile* = "models.nim"
+  mdlDir* = "models"
 
 const ## Migration structure
   mgrDir* = "migrations"
   binDir* = "bin"
   mgrFile* = "migration.nim"
 
-const ## Template structure
+const ## Templates
   tmplDir* = "templates"
   mdlTmpl* = staticRead(tmplDir/"models.nim.tmpl")
   cfgTmpl* = staticRead(tmplDir/"config.nims.tmpl")
   mgrTmpl* = staticRead(tmplDir/"migration.nim.tmpl")
 
-const
-  cmplCmd* = "nim c --verbosity:0 --hints:off --outdir:" & (mgrDir/binDir)
-  cfgFile* = "config.nims"
+const ## Migration compilation
+  cmplCmd* = "nim c --verbosity:0 --hints:off --nimcache:$# --out:$#"
+  applyFlag* = "--define:apply"
+  rollbackFlag* = "--define:rollback"
+  verboseFlag* = "--define:verbose"
+  applyPfx* = "apply_"
+  rollbackPfx* = "rollback_"
+  cacheSfx* = "_cache"
+
+const cfgFile* = "config.nims"
