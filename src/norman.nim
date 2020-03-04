@@ -78,8 +78,6 @@ proc apply(verbose = false) =
 
       [cmplCmd % [cacheDirPath, binPath], (if verbose: verboseFlag else: ""), applyFlag, mgrDir/mgr/mgrFile].join(" ")
 
-  echo cmds
-
   discard execProcesses cmds
 
   echo "Compiled $# migrations." % $len(cmds)
