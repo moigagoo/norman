@@ -73,9 +73,7 @@ proc apply(verbose = false) =
 
   createDir(mgrDir/binDir)
 
-  let
-    lstMgrName = if fileExists(lstFile): readFile(lstFile) else: ""
-    mgrNames = getMgrNames(after=lstMgrName)
+  let mgrNames = getMgrNames(after=readFile(lstFile))
 
   var
     binPaths, cmplCmds: seq[string]
@@ -118,11 +116,13 @@ proc apply(verbose = false) =
     let (output, exitCode) = execCmdEx(binPath)
 
     if exitCode != 0:
-      echo "Migration failed: $#" % mgrNames[idx]
+      echo ".\nMigration failed: $#" % mgrNames[idx]
 
       echo output
 
       return
+
+    (mgrDir/lstFile).writeFile(mgrNames[idx])
 
   echo ". Done!"
 
