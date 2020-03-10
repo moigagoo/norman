@@ -23,12 +23,12 @@ proc slugified*(msg: string): string =
 
   msgClean.join().normalize().splitWhitespace().join("_")
 
-proc getMgrNames*(after=""): seq[string] =
+proc getMgrNames*(): seq[string] =
   ## Get a sorted list of migration names that come after ``after``.
 
   let mgrs = collect(newSeq):
     for path in walkDirs(mgrDir/"*"):
-      if (let dirName = splitPath(path).tail; dirName != binDir and dirName > after):
+      if (let dirName = splitPath(path).tail; dirName != binDir):
         dirName
 
   sorted mgrs

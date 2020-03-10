@@ -73,7 +73,12 @@ proc apply(verbose = false) =
 
   createDir(mgrDir/binDir)
 
-  let mgrNames = getMgrNames(after=readFile(lstFile))
+  let
+    lstMgrName = readFile(mgrDir/lstFile)
+    mgrNames = collect(newSeq):
+      for mgrName in getMgrNames():
+        if mgrName > lstMgrName:
+          mgrName
 
   var
     binPaths, cmplCmds: seq[string]
@@ -87,7 +92,13 @@ proc apply(verbose = false) =
       cmplCmd = [cmplCmdTmpl % [cacheDirPath, binPath], (if verbose: verboseFlag else: ""), applyFlag, mgrDir/mgrName/mgrFile].join(" ")
 
     binPaths.add binPath
+
     cmplCmds.add cmplCmd
+
+  if len(mgrNames) == 0:
+    echo "No migrations to apply."
+
+    return
 
   proc updCmplMsg() =
     updTermMsg("Compiling migrations: $#/$#" % [$cmplCount, $len(mgrNames)])
@@ -125,6 +136,7 @@ proc apply(verbose = false) =
     (mgrDir/lstFile).writeFile(mgrNames[idx])
 
   echo ". Done!"
+
 
 when isMainModule:
   let nimbleFile = findNimbleFile()
