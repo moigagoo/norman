@@ -34,7 +34,7 @@ proc init() =
 
   createDir(mgrDir)
 
-  lstFile.writeFile("")
+  (mgrDir/lstFile).writeFile("")
 
   echo "Migration directory created: $#." % mgrDir
 
