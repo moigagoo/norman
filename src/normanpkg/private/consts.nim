@@ -17,7 +17,7 @@ const ## Templates
   mgrTmpl* = staticRead(tmplDir/"migration.nim.tmpl")
 
 const ## Migration compilation
-  cmplCmd* = "nim c --verbosity:0 --hints:off --nimcache:$# --out:$#"
+  cmplCmdTmpl* = "nim c --verbosity:0 --hints:off --nimcache:$# --out:$#"
   applyFlag* = "--define:apply"
   rollbackFlag* = "--define:rollback"
   verboseFlag* = "--define:verbose"
@@ -25,4 +25,6 @@ const ## Migration compilation
   rollbackPfx* = "rollback_"
   cacheSfx* = "_cache"
 
-const cfgFile* = "config.nims"
+const
+  cfgFile* = "config.nims"
+  lstFile* = ".last"

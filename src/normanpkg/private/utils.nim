@@ -2,6 +2,7 @@ import os
 import strutils
 import sugar
 import algorithm
+import terminal
 
 import consts
 
@@ -22,12 +23,20 @@ proc slugified*(msg: string): string =
 
   msgClean.join().normalize().splitWhitespace().join("_")
 
-proc getMgrs*(): seq[string] =
-  ## Get a sorted list of migrations in the migration folder.
+proc getMgrNames*(after=""): seq[string] =
+  ## Get a sorted list of migration names that come after ``after``.
 
   let mgrs = collect(newSeq):
     for path in walkDirs(mgrDir/"*"):
-      if (let dirName = splitPath(path).tail; dirName != binDir):
+      if (let dirName = splitPath(path).tail; dirName != binDir and dirName > after):
         dirName
 
   sorted mgrs
+
+proc updTermMsg*(msg: string) =
+  ## Update terminal message.
+
+  eraseLine()
+  flushFile stdout
+  stdout.write(msg)
+

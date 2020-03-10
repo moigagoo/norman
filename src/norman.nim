@@ -22,15 +22,22 @@ proc init() =
 
   (pkgDir/mdlFile).writeFile mdlTmpl
 
-  echo "Models file created in $#." % (pkgDir/mdlFile)
+  echo "Models file created: $#." % (pkgDir/mdlFile)
 
   createDir(pkgDir/mdlDir)
 
-  echo "Models directory created in $#." % (pkgDir/mdlDir)
+  echo "Models directory created: $#." % (pkgDir/mdlDir)
 
   cfgFile.writeFile(cfgTmpl)
 
-  echo "Config file created in $#." % cfgFile
+  echo "Config file created: $#." % cfgFile
+
+  createDir(mgrDir)
+
+  lstFile.writeFile("")
+
+  echo "Migration directory created: $#." % mgrDir
+
 
 proc generate(message: string) =
   ## Generate a migration from the current model state.
@@ -40,8 +47,8 @@ proc generate(message: string) =
     slug = slugified message
     newMgrDir = mgrDir / "$#_$#" % [$timestamp, slug]
     lstMdlImpPath =
-      if (let mgrs = getMgrs(); len(mgrs) > 0):
-        '"' & "../$#/models" % mgrs[^1] & '"'
+      if (let mgrNames = getMgrNames(); len(mgrNames) > 0):
+        '"' & "../$#/models" % mgrNames[^1] & '"'
       else:
         "models"
 
@@ -66,27 +73,58 @@ proc apply(verbose = false) =
 
   createDir(mgrDir/binDir)
 
-  var binPaths: seq[string]
+  let
+    lstMgrName = if fileExists(lstFile): readFile(lstFile) else: ""
+    mgrNames = getMgrNames(after=lstMgrName)
 
-  let cmds = collect(newSeq):
-    for mgr in getMgrs():
-      let
-        cacheDirPath = mgrDir / binDir / applyPfx & mgr & cacheSfx
-        binPath = mgrDir / binDir / applyPfx & mgr
+  var
+    binPaths, cmplCmds: seq[string]
+    cmplCount: Natural
+    cmplFailIdxs: seq[int]
 
-      binPaths.add binPath
+  for mgrName in mgrNames:
+    let
+      cacheDirPath = mgrDir / binDir / applyPfx & mgrName & cacheSfx
+      binPath = mgrDir / binDir / applyPfx & mgrName
+      cmplCmd = [cmplCmdTmpl % [cacheDirPath, binPath], (if verbose: verboseFlag else: ""), applyFlag, mgrDir/mgrName/mgrFile].join(" ")
 
-      [cmplCmd % [cacheDirPath, binPath], (if verbose: verboseFlag else: ""), applyFlag, mgrDir/mgr/mgrFile].join(" ")
+    binPaths.add binPath
+    cmplCmds.add cmplCmd
 
-  discard execProcesses cmds
+  proc updCmplMsg() =
+    updTermMsg("Compiling migrations: $#/$#" % [$cmplCount, $len(mgrNames)])
 
-  echo "Compiled $# migrations." % $len(cmds)
+  discard execProcesses(
+    cmplCmds,
+    options = {poStdErrToStdOut},
+    beforeRunEvent = (idx: int) => updCmplMsg(),
+    afterRunEvent = (idx: int, p: Process) => (if peekExitCode(p) != 0: cmplFailIdxs.add idx; inc cmplCount; updCmplMsg())
+  )
 
-  for binPath in sorted binPaths:
-    echo execProcess binPath
+  echo ". Done!"
 
-  echo "Applied $# migrations." % $len(binPaths)
+  if len(cmplFailIdxs) > 0:
+    echo "Compilation failed:"
 
+    for idx in cmplFailIdxs:
+      echo "\t$#" % mgrNames[idx]
+
+    return
+
+  for idx, binPath in sorted binPaths:
+    if not verbose:
+      updTermMsg("Applying migrations: $#/$#" % [$(idx+1), $len(mgrNames)])
+
+    let (output, exitCode) = execCmdEx(binPath)
+
+    if exitCode != 0:
+      echo "Migration failed: $#" % mgrNames[idx]
+
+      echo output
+
+      return
+
+  echo ". Done!"
 
 when isMainModule:
   let nimbleFile = findNimbleFile()
