@@ -24,11 +24,11 @@ macro exportBackend() =
   )
 
 template migrate*(body: untyped) =
-  when defined(apply):
+  when defined(migrate):
     body
 
 template undo*(body: untyped) =
-  when defined(rollback):
+  when defined(undo):
     body
 
 macro models*(body: untyped) =
