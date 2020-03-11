@@ -39,4 +39,3 @@ proc updTermMsg*(msg: string) =
   eraseLine()
   flushFile stdout
   stdout.write(msg)
-

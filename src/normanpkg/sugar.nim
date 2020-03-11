@@ -44,7 +44,7 @@ macro models*(body: untyped) =
 when defined(verbose):
   import logging
 
-  addHandler newConsoleLogger()
+  addHandler newConsoleLogger(fmtStr="")
 
 importBackend()
 

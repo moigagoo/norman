@@ -68,7 +68,7 @@ proc generate(message: string) =
 
   echo "New migration template created in $#." % (newMgrDir/mgrFile)
 
-proc apply(verbose = false) =
+proc migrate(verbose = false) =
   ## Apply migrations.
 
   createDir(mgrDir/binDir)
@@ -101,7 +101,7 @@ proc apply(verbose = false) =
     cmplCmds.add cmplCmd
 
   proc updCmplMsg() =
-    updTermMsg("Compiling migrations: $#/$#" % [$cmplCount, $len(mgrNames)])
+    updTermMsg("Compiled migrations: $#/$#." % [$cmplCount, $len(mgrNames)])
 
   discard execProcesses(
     cmplCmds,
@@ -110,32 +110,32 @@ proc apply(verbose = false) =
     afterRunEvent = (idx: int, p: Process) => (if peekExitCode(p) != 0: cmplFailIdxs.add idx; inc cmplCount; updCmplMsg())
   )
 
-  echo ". Done!"
-
   if len(cmplFailIdxs) > 0:
-    echo "Compilation failed:"
+    echo "\nFailed:"
 
     for idx in cmplFailIdxs:
       echo "\t$#" % mgrNames[idx]
 
     return
 
+  echo "\nApplied migrations:"
+
   for idx, binPath in binPaths:
-    if not verbose:
-      updTermMsg("Applying migrations: $#/$#" % [$(idx+1), $len(mgrNames)])
+    echo "\t$#" % mgrNames[idx]
 
     let (output, exitCode) = execCmdEx(binPath)
 
     if exitCode != 0:
-      echo ".\nMigration failed: $#" % mgrNames[idx]
+      echo ".\nFailed: $#" % mgrNames[idx]
 
-      echo output
+      echo output.indent(2, "\t")
 
       return
 
-    (mgrDir/lstFile).writeFile(mgrNames[idx])
+    if verbose:
+      echo output.indent(2, "\t")
 
-  echo ". Done!"
+    (mgrDir/lstFile).writeFile(mgrNames[idx])
 
 proc rollback(n: Positive = 1, all = false, verbose = false) =
   ## Rollback ``n``or all migrations.
@@ -173,7 +173,7 @@ proc rollback(n: Positive = 1, all = false, verbose = false) =
     cmplCmds.add cmplCmd
 
   proc updCmplMsg() =
-    updTermMsg("Compiling migrations: $#/$#" % [$cmplCount, $len(mgrNames)])
+    updTermMsg("Compiled migrations: $#/$#." % [$cmplCount, $len(mgrNames)])
 
   discard execProcesses(
     cmplCmds,
@@ -182,32 +182,32 @@ proc rollback(n: Positive = 1, all = false, verbose = false) =
     afterRunEvent = (idx: int, p: Process) => (if peekExitCode(p) != 0: cmplFailIdxs.add idx; inc cmplCount; updCmplMsg())
   )
 
-  echo ". Done!"
-
   if len(cmplFailIdxs) > 0:
-    echo "Compilation failed:"
+    echo "\nFailed:"
 
     for idx in cmplFailIdxs:
       echo "\t$#" % mgrNames[idx]
 
     return
 
+  echo "\nRollbacked migrations:"
+
   for idx, binPath in binPaths:
-    if not verbose:
-      updTermMsg("Rollbacking migrations: $#/$#" % [$(idx+1), $len(mgrNames)])
+    echo "\t$#" % mgrNames[idx]
 
     let (output, exitCode) = execCmdEx(binPath)
 
     if exitCode != 0:
-      echo ".\nMigration failed: $#" % mgrNames[idx]
+      echo ".\nFailed: $#" % mgrNames[idx]
 
-      echo output
+      echo output.indent(2, "\t")
 
       return
 
-    (mgrDir/lstFile).writeFile(if idx < high(appliedMgrNames): appliedMgrNames[idx+1] else: "")
+    if verbose:
+      echo output.indent(2, "\t")
 
-  echo ". Done!"
+    (mgrDir/lstFile).writeFile(if idx < high(appliedMgrNames): appliedMgrNames[idx+1] else: "")
 
 
 when isMainModule:
@@ -223,4 +223,4 @@ when isMainModule:
 
   pkgDir = srcDir / pkgName
 
-  dispatchMulti([init], [generate], [apply], [rollback])
+  dispatchMulti([init], [generate], [migrate], [rollback])
