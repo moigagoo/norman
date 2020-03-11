@@ -23,11 +23,11 @@ macro exportBackend() =
     ident dbBackend
   )
 
-template apply*(body: untyped) =
+template migrate*(body: untyped) =
   when defined(apply):
     body
 
-template rollback*(body: untyped) =
+template undo*(body: untyped) =
   when defined(rollback):
     body
 

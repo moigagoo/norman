@@ -98,9 +98,9 @@ proc migrate(verbose = false) =
 
   for mgrName in mgrNames:
     let
-      cacheDirPath = mgrDir / binDir / applyPfx & mgrName & cacheSfx
-      binPath = mgrDir / binDir / applyPfx & mgrName
-      cmplCmd = [cmplCmdTmpl % [cacheDirPath, binPath], (if verbose: verboseFlag else: ""), applyFlag, mgrDir/mgrName/mgrFile].join(" ")
+      cacheDirPath = mgrDir / binDir / mgrPfx & mgrName & cacheSfx
+      binPath = mgrDir / binDir / mgrPfx & mgrName
+      cmplCmd = [cmplCmdTmpl % [cacheDirPath, binPath], (if verbose: verboseFlag else: ""), mgrFlag, mgrDir/mgrName/mgrFile].join(" ")
 
     binPaths.add binPath
 
@@ -143,8 +143,8 @@ proc migrate(verbose = false) =
 
     (mgrDir/lstFile).writeFile(mgrNames[idx])
 
-proc rollback(n: Positive = 1, all = false, verbose = false) =
-  ## Rollback ``n``or all migrations.
+proc undo(n: Positive = 1, all = false, verbose = false) =
+  ## Undo ``n``or all migrations.
 
   createDir(mgrDir/binDir)
 
@@ -159,7 +159,7 @@ proc rollback(n: Positive = 1, all = false, verbose = false) =
     mgrNames = if all: appliedMgrNames else: appliedMgrNames[0..<n]
 
   if len(mgrNames) == 0:
-    echo "No migrations to rollback."
+    echo "No migrations to undo."
 
     return
 
@@ -170,9 +170,9 @@ proc rollback(n: Positive = 1, all = false, verbose = false) =
 
   for mgrName in mgrNames:
     let
-      cacheDirPath = mgrDir / binDir / rollbackPfx & mgrName & cacheSfx
-      binPath = mgrDir / binDir / rollbackPfx & mgrName
-      cmplCmd = [cmplCmdTmpl % [cacheDirPath, binPath], (if verbose: verboseFlag else: ""), rollbackFlag, mgrDir/mgrName/mgrFile].join(" ")
+      cacheDirPath = mgrDir / binDir / undoPfx & mgrName & cacheSfx
+      binPath = mgrDir / binDir / undoPfx & mgrName
+      cmplCmd = [cmplCmdTmpl % [cacheDirPath, binPath], (if verbose: verboseFlag else: ""), undoFlag, mgrDir/mgrName/mgrFile].join(" ")
 
     binPaths.add binPath
 
@@ -196,7 +196,7 @@ proc rollback(n: Positive = 1, all = false, verbose = false) =
 
     return
 
-  echo "\nRollbacked migrations:"
+  echo "\nUndone migrations:"
 
   for idx, binPath in binPaths:
     echo "\t$#" % mgrNames[idx]
@@ -229,4 +229,4 @@ when isMainModule:
 
   pkgDir = srcDir / pkgName
 
-  dispatchMulti([init], [generate], [migrate], [rollback])
+  dispatchMulti([init], [generate], [migrate], [undo])

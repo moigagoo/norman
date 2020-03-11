@@ -1,7 +1,7 @@
 import normanpkg/sugar
 
 
-apply:
+migrate:
   import models
 
   withDb:
@@ -9,7 +9,7 @@ apply:
       discard
 
 
-rollback:
+undo:
   import $#
 
   withDb:

@@ -18,11 +18,11 @@ const ## Templates
 
 const ## Migration compilation
   cmplCmdTmpl* = "nim c --verbosity:0 --hints:off --nimcache:$# --out:$#"
-  applyFlag* = "--define:apply"
-  rollbackFlag* = "--define:rollback"
+  mgrFlag* = "--define:migrate"
+  undoFlag* = "--define:undo"
   verboseFlag* = "--define:verbose"
-  applyPfx* = "apply_"
-  rollbackPfx* = "rollback_"
+  mgrPfx* = "apply_"
+  undoPfx* = "rollback_"
   cacheSfx* = "_cache"
 
 const
