@@ -80,6 +80,11 @@ proc apply(verbose = false) =
         if mgrName > lstMgrName:
           mgrName
 
+  if len(mgrNames) == 0:
+    echo "No migrations to apply."
+
+    return
+
   var
     binPaths, cmplCmds: seq[string]
     cmplCount: Natural
@@ -94,11 +99,6 @@ proc apply(verbose = false) =
     binPaths.add binPath
 
     cmplCmds.add cmplCmd
-
-  if len(mgrNames) == 0:
-    echo "No migrations to apply."
-
-    return
 
   proc updCmplMsg() =
     updTermMsg("Compiling migrations: $#/$#" % [$cmplCount, $len(mgrNames)])
@@ -120,7 +120,7 @@ proc apply(verbose = false) =
 
     return
 
-  for idx, binPath in sorted binPaths:
+  for idx, binPath in binPaths:
     if not verbose:
       updTermMsg("Applying migrations: $#/$#" % [$(idx+1), $len(mgrNames)])
 
@@ -134,6 +134,78 @@ proc apply(verbose = false) =
       return
 
     (mgrDir/lstFile).writeFile(mgrNames[idx])
+
+  echo ". Done!"
+
+proc rollback(n: Positive = 1, all = false, verbose = false) =
+  ## Rollback ``n``or all migrations.
+
+  createDir(mgrDir/binDir)
+
+  var count: Natural
+
+  let
+    lstMgrName = readFile(mgrDir/lstFile)
+    appliedMgrNames = collect(newSeq):
+      for mgrName in reversed getMgrNames():
+        if mgrName <= lstMgrName:
+          mgrName
+    mgrNames = if all: appliedMgrNames else: appliedMgrNames[0..<n]
+
+  if len(mgrNames) == 0:
+    echo "No migrations to rollback."
+
+    return
+
+  var
+    binPaths, cmplCmds: seq[string]
+    cmplCount: Natural
+    cmplFailIdxs: seq[int]
+
+  for mgrName in mgrNames:
+    let
+      cacheDirPath = mgrDir / binDir / rollbackPfx & mgrName & cacheSfx
+      binPath = mgrDir / binDir / rollbackPfx & mgrName
+      cmplCmd = [cmplCmdTmpl % [cacheDirPath, binPath], (if verbose: verboseFlag else: ""), rollbackFlag, mgrDir/mgrName/mgrFile].join(" ")
+
+    binPaths.add binPath
+
+    cmplCmds.add cmplCmd
+
+  proc updCmplMsg() =
+    updTermMsg("Compiling migrations: $#/$#" % [$cmplCount, $len(mgrNames)])
+
+  discard execProcesses(
+    cmplCmds,
+    options = {poStdErrToStdOut},
+    beforeRunEvent = (idx: int) => updCmplMsg(),
+    afterRunEvent = (idx: int, p: Process) => (if peekExitCode(p) != 0: cmplFailIdxs.add idx; inc cmplCount; updCmplMsg())
+  )
+
+  echo ". Done!"
+
+  if len(cmplFailIdxs) > 0:
+    echo "Compilation failed:"
+
+    for idx in cmplFailIdxs:
+      echo "\t$#" % mgrNames[idx]
+
+    return
+
+  for idx, binPath in binPaths:
+    if not verbose:
+      updTermMsg("Rollbacking migrations: $#/$#" % [$(idx+1), $len(mgrNames)])
+
+    let (output, exitCode) = execCmdEx(binPath)
+
+    if exitCode != 0:
+      echo ".\nMigration failed: $#" % mgrNames[idx]
+
+      echo output
+
+      return
+
+    (mgrDir/lstFile).writeFile(if idx < high(appliedMgrNames): appliedMgrNames[idx+1] else: "")
 
   echo ". Done!"
 
@@ -151,4 +223,4 @@ when isMainModule:
 
   pkgDir = srcDir / pkgName
 
-  dispatchMulti([init], [generate], [apply])
+  dispatchMulti([init], [generate], [apply], [rollback])
