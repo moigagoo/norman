@@ -22,21 +22,23 @@ proc init() =
 
   (pkgDir/mdlFile).writeFile mdlTmpl
 
-  echo "Models file created: $#." % (pkgDir/mdlFile)
+  echo "Created models file, models directory, config file, and migrations directory:"
+
+  echo "\t$#" % pkgDir/mdlFile
 
   createDir(pkgDir/mdlDir)
 
-  echo "Models directory created: $#." % (pkgDir/mdlDir)
+  echo "\t$#" % pkgDir/mdlDir
 
   cfgFile.writeFile(cfgTmpl)
 
-  echo "Config file created: $#." % cfgFile
+  echo "\t$#" % cfgFile
 
   createDir(mgrDir)
 
   (mgrDir/lstFile).writeFile("")
 
-  echo "Migration directory created: $#." % mgrDir
+  echo "\t$#" % mgrDir
 
 
 proc generate(message: string) =
@@ -56,17 +58,21 @@ proc generate(message: string) =
 
   createDir(newMgrDir)
 
-  echo "New migration directory created in $#." % (newMgrDir)
+  echo "Created migration directory, model backup, and migration template:"
+
+  echo "\t$#" % newMgrDir
 
   copyFile(pkgDir/mdlFile, newMgrDir/mdlFile)
 
   copyDir(pkgDir/mdlDir, newMgrDir/mdlDir)
 
-  echo "Current models copied to $# and $#." % [newMgrDir/mdlFile, newMgrDir/mdlDir]
+  echo "\t$#" % newMgrDir/mdlFile
+
+  echo "\t$#" % newMgrDir/mdlDir
 
   (newMgrDir/mgrFile).writeFile(mgrTmpl % lstMdlImpPath)
 
-  echo "New migration template created in $#." % (newMgrDir/mgrFile)
+  echo "\t$#" % newMgrDir/mgrFile
 
 proc migrate(verbose = false) =
   ## Apply migrations.
