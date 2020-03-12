@@ -1,0 +1,4 @@
+findNimbleFile	normanpkg/private/utils.html#findNimbleFile	utils: findNimbleFile(): string	
+slugified	normanpkg/private/utils.html#slugified,string	utils: slugified(msg: string): string	
+getMgrNames	normanpkg/private/utils.html#getMgrNames	utils: getMgrNames(): seq[string]	
+updTermMsg	normanpkg/private/utils.html#updTermMsg,string	utils: updTermMsg(msg: string)	
