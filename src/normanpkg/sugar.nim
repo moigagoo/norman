@@ -1,3 +1,9 @@
+## Syntactic sugar for model definitions and migrations
+
+
+{.used.}
+
+
 import macros
 
 
@@ -9,7 +15,9 @@ const
   dbDatabase* {.strdefine.}: string = ""
 
 
-macro importBackend() =
+macro importBackend*() =
+  ## Generate the code to import Norm backend defined in the project config.
+
   newNimNode(nnkImportStmt).add(
     infix(
       ident "norm",
@@ -18,20 +26,21 @@ macro importBackend() =
     )
   )
 
-macro exportBackend() =
-  newNimNode(nnkExportStmt).add(
-    ident dbBackend
-  )
-
 template migrate*(body: untyped) =
+  ## Migrate block for migrations.
+
   when defined(migrate):
     body
 
 template undo*(body: untyped) =
+  ## Undo block for migrations.
+
   when defined(undo):
     body
 
 macro models*(body: untyped) =
+  ## Model definition block.
+
   newCall(
     ident"db",
     newStrLitNode dbConnection,
@@ -45,7 +54,3 @@ when defined(verbose):
   import logging
 
   addHandler newConsoleLogger(fmtStr="")
-
-importBackend()
-
-exportBackend()

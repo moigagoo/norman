@@ -1,4 +1,5 @@
-## Norman, a migration manager for Norm.
+## .. include:: ../README.rst
+
 
 import strutils
 import os, osproc
@@ -10,7 +11,7 @@ import algorithm
 import cligen
 
 import normanpkg/private/[consts, utils]
-
+from normanpkg/sugar as normansugar import nil
 
 var pkgDir: string
 
@@ -147,8 +148,6 @@ proc undo(n: Positive = 1, all = false, verbose = false) =
   ## Undo ``n``or all migrations.
 
   createDir(mgrDir/binDir)
-
-  var count: Natural
 
   let
     lstMgrName = readFile(mgrDir/lstFile)
