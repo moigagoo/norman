@@ -1,0 +1,19 @@
+import normanpkg/sugar
+
+importBackend()
+
+
+migrate:
+  import models
+
+  withDb:
+    transaction:
+      discard
+
+
+undo:
+  import $#
+
+  withDb:
+    transaction:
+      discard
