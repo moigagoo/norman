@@ -9,7 +9,7 @@ Changelog
 -   [t]—test suite improvement
 
 
-1.0.0 (WIP)
-===========
+1.0.0 (March 12, 2020)
+======================
 
 -   🎉 Initial release.
