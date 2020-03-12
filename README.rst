@@ -58,7 +58,7 @@ Usage
 
 -   ``models.nim`` is the models entrypoint module. Import it in your app whenever you need to access the DB.
 
-    You can either keep all your models in this file under ``db`` macro, or distrubute them across ``models/*`` submodules and aggregate them with ``dbFromTypes``.
+    You can either keep all your models in this file under ``db`` macro, or distrubute them across ``models/*`` submodules and aggregate them with ``dbFromTypes``.
 
     Initially, a placeholder model Model is defined in it to demonstrate how you can define your actual models.
 
