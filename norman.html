@@ -156,17 +156,36 @@ function main() {
 <li>the code to undo those changes</li>
 </ul>
 <p>The model state is stored the same way it's stored in your app: as <tt class="docutils literal"><span class="pre">models.nim</span></tt> and <tt class="docutils literal"><span class="pre">models</span></tt>.</p>
-<p>The migration code is stored in a file called <tt class="docutils literal"><span class="pre">migration.nim</span></tt>, in <tt class="docutils literal"><span class="pre">apply</span></tt> and <tt class="docutils literal"><span class="pre">rollback</span></tt> blocks.</p>
+<p>The migration code is stored in a file called <tt class="docutils literal"><span class="pre">migration.nim</span></tt>, in <tt class="docutils literal"><span class="pre">migrate</span></tt> and <tt class="docutils literal"><span class="pre">undo</span></tt> blocks.</p>
 <p>Migration names are prefixed with creation timestamps to ensure sequential application.</p>
-<p>3.  Apply the migrations from <tt class="docutils literal"><span class="pre">migrations</span></tt> directory with <tt class="docutils literal"><span class="pre">norman migrate</span></tt>:</p>
+<p>3.  Edit the new migration and add the actual code to apply and undo it. For the first migration, you probably want something like this:</p>
+<pre class="listing"><span class="Keyword">import</span> <span class="Identifier">normanpkg</span><span class="Operator">/</span><span class="Identifier">sugar</span>
+
+<span class="Identifier">importBackend</span><span class="Punctuation">(</span><span class="Punctuation">)</span>
+
+
+<span class="Identifier">migrate</span><span class="Punctuation">:</span>
+  <span class="Keyword">import</span> <span class="Identifier">models</span>
+  
+  <span class="Identifier">withDb</span><span class="Punctuation">:</span>
+    <span class="Identifier">transaction</span><span class="Punctuation">:</span>
+      <span class="Identifier">createTables</span><span class="Punctuation">(</span><span class="Identifier">force</span><span class="Operator">=</span><span class="Identifier">true</span><span class="Punctuation">)</span>
+
+
+<span class="Identifier">undo</span><span class="Punctuation">:</span>
+  <span class="Keyword">import</span> <span class="Identifier">models</span>
+  
+  <span class="Identifier">withDb</span><span class="Punctuation">:</span>
+    <span class="Identifier">transaction</span><span class="Punctuation">:</span>
+      <span class="Identifier">dropTables</span><span class="Punctuation">(</span><span class="Punctuation">)</span></pre><p>4.  Apply the migrations from <tt class="docutils literal"><span class="pre">migrations</span></tt> directory with <tt class="docutils literal"><span class="pre">norman migrate</span></tt>:</p>
 <pre class="listing"><span class="Operator">$</span> <span class="Identifier">norman</span> <span class="Identifier">migrate</span>
 <span class="Identifier">Compiled</span> <span class="Identifier">migrations</span><span class="Punctuation">:</span> <span class="DecNumber">1</span><span class="Operator">/</span><span class="FloatNumber">1.</span>
 <span class="Identifier">Applied</span> <span class="Identifier">migrations</span><span class="Punctuation">:</span>
-        <span class="DecNumber">1583931473_</span><span class="Identifier">init_db</span></pre><p>4.  To undo a migration, run <tt class="docutils literal"><span class="pre">norman undo</span></tt>:</p>
+        <span class="DecNumber">1583931473_</span><span class="Identifier">init_db</span></pre><p>5.  To undo a migration, run <tt class="docutils literal"><span class="pre">norman undo</span></tt>:</p>
 <pre class="listing"><span class="Operator">$</span> <span class="Identifier">norman</span> <span class="Identifier">undo</span>
 <span class="Identifier">Compiled</span> <span class="Identifier">migrations</span><span class="Punctuation">:</span> <span class="DecNumber">1</span><span class="Operator">/</span><span class="FloatNumber">1.</span>
 <span class="Identifier">Undone</span> <span class="Identifier">migrations</span><span class="Punctuation">:</span>
-        <span class="DecNumber">1583931473_</span><span class="Identifier">init_db</span></pre><p>5.  Whenever you modify your models, go to 2.</p>
+        <span class="DecNumber">1583931473_</span><span class="Identifier">init_db</span></pre><p>6.  Whenever you modify your models, go to 2.</p>
 <p>For full usage, run <tt class="docutils literal"><span class="pre">norman help</span></tt>:</p>
 <pre class="listing"><span class="Identifier">This</span> <span class="Keyword">is</span> <span class="Identifier">a</span> <span class="Identifier">multiple</span><span class="Operator">-</span><span class="Identifier">dispatch</span> <span class="Identifier">command</span><span class="Operator">.</span>  <span class="Identifier">Top</span><span class="Operator">-</span><span class="Identifier">level</span> <span class="Operator">--</span><span class="Identifier">help</span><span class="Operator">/--</span><span class="Identifier">help</span><span class="Operator">-</span><span class="Identifier">syntax</span>
 <span class="Keyword">is</span> <span class="Identifier">also</span> <span class="Identifier">available</span><span class="Operator">.</span>  <span class="Identifier">Usage</span> <span class="Keyword">is</span> <span class="Identifier">like</span><span class="Punctuation">:</span>
@@ -214,7 +233,7 @@ function main() {
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2020-03-12 19:54:58 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2020-03-13 12:34:35 UTC</small>
       </div>
     </div>
   </div>
