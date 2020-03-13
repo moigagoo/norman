@@ -12,7 +12,7 @@ bin           = @["norman"]
 
 # Dependencies
 
-requires "nim >= 1.1.0", "norm#head", "cligen"
+requires "nim >= 1.1.0", "norm >= 1.1.2", "cligen"
 
 task apidoc, "Generate API docs":
   --outdir:"htmldocs"
