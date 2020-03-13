@@ -9,8 +9,8 @@ Changelog
 -   [t]—test suite improvement
 
 
-1.0.1 (WIP)
-===========
+1.0.1 (March 13, 2020)
+======================
 
 -   [f] Fixed issue with ``importBackend`` not exporting the imported backend making it unusable in moduled importing ``models``.
 
