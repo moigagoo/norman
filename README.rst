@@ -58,7 +58,7 @@ Usage
 
 -   ``models.nim`` is the models entrypoint module. Import it in your app whenever you need to access the DB.
 
-    You can either keep all your models in this file under ``db`` macro, or distrubute them across ``models/*`` submodules and aggregate them with ``dbFromTypes``.
+    You can either keep all your models in this file under ``db`` macro, or distrubute them across ``models/*`` submodules and aggregate them with ``dbFromTypes``.
 
     Initially, a placeholder model Model is defined in it to demonstrate how you can define your actual models.
 
@@ -88,11 +88,35 @@ In Norman terms, migration is a directory inside ``migrations`` that contains th
 
 The model state is stored the same way it's stored in your app: as ``models.nim`` and ``models``.
 
-The migration code is stored in a file called ``migration.nim``, in ``apply`` and ``rollback`` blocks.
+The migration code is stored in a file called ``migration.nim``, in ``migrate`` and ``undo`` blocks.
 
 Migration names are prefixed with creation timestamps to ensure sequential application.
 
-3.  Apply the migrations from ``migrations`` directory with ``norman migrate``:
+3.  Edit the new migration and add the actual code to apply and undo it. For the first migration, you probably want something like this:
+
+.. code-block:: nim
+
+    import normanpkg/sugar
+
+    importBackend()
+
+
+    migrate:
+      import models
+
+      withDb:
+        transaction:
+          createTables(force=true)
+
+
+    undo:
+      import models
+
+      withDb:
+        transaction:
+          dropTables()
+
+4.  Apply the migrations from ``migrations`` directory with ``norman migrate``:
 
 .. code-block::
 
@@ -101,7 +125,7 @@ Migration names are prefixed with creation timestamps to ensure sequential appli
     Applied migrations:
             1583931473_init_db
 
-4.  To undo a migration, run ``norman undo``:
+5.  To undo a migration, run ``norman undo``:
 
 .. code-block::
 
@@ -110,7 +134,7 @@ Migration names are prefixed with creation timestamps to ensure sequential appli
     Undone migrations:
             1583931473_init_db
 
-5.  Whenever you modify your models, go to 2.
+6.  Whenever you modify your models, go to 2.
 
 For full usage, run ``norman help``:
 

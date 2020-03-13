@@ -16,12 +16,17 @@ const
 
 
 macro importBackend*() =
-  ## Generate the code to import Norm backend defined in the project config.
+  ## Generate the code to import and export Norm backend defined in the project config.
 
-  newNimNode(nnkImportStmt).add(
-    infix(
-      ident "norm",
-      "/",
+  newStmtList().add(
+    newNimNode(nnkImportStmt).add(
+      infix(
+        ident "norm",
+        "/",
+        ident dbBackend
+      )
+    ),
+    newNimNode(nnkExportStmt).add(
       ident dbBackend
     )
   )
