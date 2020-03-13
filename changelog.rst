@@ -9,6 +9,12 @@ Changelog
 -   [t]—test suite improvement
 
 
+1.0.2 (March 13, 2020)
+======================
+
+-   [f] Require Norm >= 1.1.2.
+
+
 1.0.1 (March 13, 2020)
 ======================
 
