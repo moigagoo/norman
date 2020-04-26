@@ -1,6 +1,7 @@
 ## .. include:: ../README.rst
 
 
+import streams
 import strutils
 import os, osproc
 import parsecfg
@@ -215,17 +216,34 @@ proc undo(n: Positive = 1, all = false, verbose = false) =
     (mgrDir/lstFile).writeFile(if idx < high(appliedMgrNames): appliedMgrNames[idx+1] else: "")
 
 
+proc getPkgDirFromNimble*(nimbleFile: string): string =
+  let pkgName = splitFile(nimbleFile).name
+  var fs = newFileStream(nimbleFile, fmRead)
+  if fs != nil:
+    var p: CfgParser
+    open(p, fs, nimbleFile)
+    defer: close(p)
+    while true:
+      var ev = next(p)
+      case ev.kind
+      of cfgEof:
+        break
+      of cfgKeyValuePair:
+        case ev.key.normalize
+        of "normanbasedir": return ev.value
+        of "srcdir": result = ev.value / pkgName
+        else: discard
+      else: discard
+
+
 when isMainModule:
   let nimbleFile = findNimbleFile()
 
   if len(nimbleFile) == 0:
     quit(".nimble file not found. Please run Norman inside a package.")
 
-  let
-    cfg = loadConfig(nimbleFile)
-    srcDir = cfg.getSectionValue("", "srcDir")
-    pkgName = splitFile(nimbleFile).name
-
-  pkgDir = srcDir / pkgName
+  pkgDir = getPkgDirFromNimble(nimbleFile)
+  if pkgDir == "":
+    quit("Unable to find srcDir or normanBaseDir in .nimble file")
 
   dispatchMulti([init], [generate], [migrate], [undo])

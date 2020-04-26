@@ -62,6 +62,8 @@ Usage
 
     Initially, a placeholder model Model is defined in it to demonstrate how you can define your actual models.
 
+    You can set ``normanBaseDir`` in your ``.nimble`` file to use a different root directory for your ``models.nim`` file and ``models/*`` submodules.
+
 -   ``models`` is the models submodules directory. Initially, it's empty.
 -   ``config.nim`` is the project config file. Use it to set the DB backend and credentials across your project.
 
