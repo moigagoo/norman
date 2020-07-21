@@ -1,17 +1,9 @@
 version: '3'
 
 services:
-
-  postgres:
-    image: postgres
-    environment:
-      POSTGRES_PASSWORD: postgres
-
   tests:
     build: .
     image: norman
-    depends_on:
-      - postgres
     volumes:
       - .:/usr/src/app
     command: nimble test

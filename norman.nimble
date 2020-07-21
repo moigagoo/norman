@@ -1,6 +1,6 @@
 # Package
 
-version       = "1.0.2"
+version       = "2.0.0"
 author        = "Constantine Molchanov"
 description   = "Migration manager for Norm."
 license       = "MIT"
@@ -12,7 +12,7 @@ bin           = @["norman"]
 
 # Dependencies
 
-requires "nim >= 1.1.0", "norm >= 1.1.2", "cligen"
+requires "nim >= 1.1.0", "norm >= 1.1.2", "cligen >= 1.1.0", "dotenv >= 1.1.1"
 
 task apidoc, "Generate API docs":
   --outdir:"htmldocs"

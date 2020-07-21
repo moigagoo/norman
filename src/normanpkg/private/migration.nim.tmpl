@@ -1,0 +1,20 @@
+import normanpkg/sugar as norman
+
+import $1/db_backend
+
+
+addLogging()
+
+
+migrate:
+  import $1/models/$2
+
+  withDb:
+    db.createTables($3())
+
+undo:
+  let qry = "DROP TABLE IF EXISTS $4"
+
+  withDb:
+    debug qry
+    db.exec sql qry

@@ -1,231 +1,75 @@
 ## .. include:: ../README.rst
 
+{.warning[UnusedImport]: off.}
 
+
+import os
+import osproc
 import strutils
-import os, osproc
-import parsecfg
-import times
-import sugar
 import algorithm
 
 import cligen
+import dotenv
 
-import normanpkg/private/[consts, utils]
-from normanpkg/sugar as normansugar import nil
-
-var pkgDir: string
+from normanpkg/sugar import nil
 
 
-proc init() =
-  ## Init model structure.
-
-  createDir(pkgDir)
-
-  (pkgDir/mdlFile).writeFile mdlTmpl
-
-  echo "Created models file, models directory, config file, and migrations directory:"
-
-  echo "\t$#" % pkgDir/mdlFile
-
-  createDir(pkgDir/mdlDir)
-
-  echo "\t$#" % pkgDir/mdlDir
-
-  cfgFile.writeFile(cfgTmpl)
-
-  echo "\t$#" % cfgFile
-
-  createDir(mgrDir)
-
-  (mgrDir/lstFile).writeFile("")
-
-  echo "\t$#" % mgrDir
+initDotEnv().load()
 
 
-proc generate(message: string) =
-  ## Generate a migration from the current model state.
+proc getMigrations(): seq[string] =
+  for migration in walkFiles("migrations/*.nim"):
+    result.add migration
 
-  let
-    timestamp = now().toTime().toUnix()
-    slug = slugified message
-    newMgrDir = mgrDir / "$#_$#" % [$timestamp, slug]
-    lstMdlImpPath =
-      if (let mgrNames = getMgrNames(); len(mgrNames) > 0):
-        '"' & "../$#/models" % mgrNames[^1] & '"'
-      else:
-        "models"
+  sort result
 
-  createDir(mgrDir)
-
-  createDir(newMgrDir)
-
-  echo "Created migration directory, model backup, and migration template:"
-
-  echo "\t$#" % newMgrDir
-
-  copyFile(pkgDir/mdlFile, newMgrDir/mdlFile)
-
-  copyDir(pkgDir/mdlDir, newMgrDir/mdlDir)
-
-  echo "\t$#" % newMgrDir/mdlFile
-
-  echo "\t$#" % newMgrDir/mdlDir
-
-  (newMgrDir/mgrFile).writeFile(mgrTmpl % lstMdlImpPath)
-
-  echo "\t$#" % newMgrDir/mgrFile
 
 proc migrate(verbose = false) =
   ## Apply migrations.
 
-  createDir(mgrDir/binDir)
+  let migrations = getMigrations()
 
-  let
-    lstMgrName = readFile(mgrDir/lstFile)
-    mgrNames = collect(newSeq):
-      for mgrName in getMgrNames():
-        if mgrName > lstMgrName:
-          mgrName
+  echo "Applying $# migrations:" % $len(migrations)
 
-  if len(mgrNames) == 0:
-    echo "No migrations to apply."
+  for migration in migrations:
+    echo "- $#" % migration
 
-    return
+    let (outp, errC) = execCmdEx("nim $# r $#" % [if verbose: "-d:verbose" else: "", migration])
 
-  var
-    binPaths, cmplCmds: seq[string]
-    cmplCount: Natural
-    cmplFailIdxs: seq[int]
-
-  for mgrName in mgrNames:
-    let
-      cacheDirPath = mgrDir / binDir / mgrPfx & mgrName & cacheSfx
-      binPath = mgrDir / binDir / mgrPfx & mgrName
-      cmplCmd = [cmplCmdTmpl % [cacheDirPath, binPath], (if verbose: verboseFlag else: ""), mgrFlag, mgrDir/mgrName/mgrFile].join(" ")
-
-    binPaths.add binPath
-
-    cmplCmds.add cmplCmd
-
-  proc updCmplMsg() =
-    updTermMsg("Compiled migrations: $#/$#." % [$cmplCount, $len(mgrNames)])
-
-  discard execProcesses(
-    cmplCmds,
-    options = {poStdErrToStdOut},
-    beforeRunEvent = (idx: int) => updCmplMsg(),
-    afterRunEvent = (idx: int, p: Process) => (if peekExitCode(p) != 0: cmplFailIdxs.add idx; inc cmplCount; updCmplMsg())
-  )
-
-  if len(cmplFailIdxs) > 0:
-    echo "\nFailed:"
-
-    for idx in cmplFailIdxs:
-      echo "\t$#" % mgrNames[idx]
-
-    return
-
-  echo "\nApplied migrations:"
-
-  for idx, binPath in binPaths:
-    echo "\t$#" % mgrNames[idx]
-
-    let (output, exitCode) = execCmdEx(binPath)
-
-    if exitCode != 0:
-      echo ".\nFailed: $#" % mgrNames[idx]
-
-      echo output.indent(2, "\t")
-
-      return
+    if errC == 0:
+      writeFile("migrations" / ".last", splitFile(migration).name)
 
     if verbose:
-      echo output.indent(2, "\t")
+      echo outp
 
-    (mgrDir/lstFile).writeFile(mgrNames[idx])
-
-proc undo(n: Positive = 1, all = false, verbose = false) =
-  ## Undo ``n``or all migrations.
-
-  createDir(mgrDir/binDir)
+proc undo(verbose = false) =
+  ## Undo the last applied migration.
 
   let
-    lstMgrName = readFile(mgrDir/lstFile)
-    appliedMgrNames = collect(newSeq):
-      for mgrName in reversed getMgrNames():
-        if mgrName <= lstMgrName:
-          mgrName
-    mgrNames = if all: appliedMgrNames else: appliedMgrNames[0..<n]
+    migrations = getMigrations()
+    lastMig = readFile("migrations" / ".last")
 
-  if len(mgrNames) == 0:
-    echo "No migrations to undo."
-
-    return
-
-  var
-    binPaths, cmplCmds: seq[string]
-    cmplCount: Natural
-    cmplFailIdxs: seq[int]
-
-  for mgrName in mgrNames:
+  for i in countdown(high(migrations), 0):
     let
-      cacheDirPath = mgrDir / binDir / undoPfx & mgrName & cacheSfx
-      binPath = mgrDir / binDir / undoPfx & mgrName
-      cmplCmd = [cmplCmdTmpl % [cacheDirPath, binPath], (if verbose: verboseFlag else: ""), undoFlag, mgrDir/mgrName/mgrFile].join(" ")
+      migration = migrations[i]
+      migName = splitFile(migration).name
 
-    binPaths.add binPath
+    if migName <= lastMig:
+      echo "Undoing migration: $#" % migration
 
-    cmplCmds.add cmplCmd
+      let (outp, errC) = execCmdEx("nim -d:undo $# r $#" % [if verbose: "-d:verbose" else: "", migration])
 
-  proc updCmplMsg() =
-    updTermMsg("Compiled migrations: $#/$#." % [$cmplCount, $len(mgrNames)])
+      if errC == 0:
+        if i == 0:
+          writeFile("migrations" / ".last", "")
+        else:
+          writeFile("migrations" / ".last", splitFile(migrations[i - 1]).name)
 
-  discard execProcesses(
-    cmplCmds,
-    options = {poStdErrToStdOut},
-    beforeRunEvent = (idx: int) => updCmplMsg(),
-    afterRunEvent = (idx: int, p: Process) => (if peekExitCode(p) != 0: cmplFailIdxs.add idx; inc cmplCount; updCmplMsg())
-  )
-
-  if len(cmplFailIdxs) > 0:
-    echo "\nFailed:"
-
-    for idx in cmplFailIdxs:
-      echo "\t$#" % mgrNames[idx]
-
-    return
-
-  echo "\nUndone migrations:"
-
-  for idx, binPath in binPaths:
-    echo "\t$#" % mgrNames[idx]
-
-    let (output, exitCode) = execCmdEx(binPath)
-
-    if exitCode != 0:
-      echo ".\nFailed: $#" % mgrNames[idx]
-
-      echo output.indent(2, "\t")
+      if verbose:
+        echo outp
 
       return
-
-    if verbose:
-      echo output.indent(2, "\t")
-
-    (mgrDir/lstFile).writeFile(if idx < high(appliedMgrNames): appliedMgrNames[idx+1] else: "")
 
 
 when isMainModule:
-  let nimbleFile = findNimbleFile()
-
-  if len(nimbleFile) == 0:
-    quit(".nimble file not found. Please run Norman inside a package.")
-
-  let
-    cfg = loadConfig(nimbleFile)
-    srcDir = cfg.getSectionValue("", "srcDir")
-    pkgName = splitFile(nimbleFile).name
-
-  pkgDir = srcDir / pkgName
-
-  dispatchMulti([init], [generate], [migrate], [undo])
+  dispatchMulti([migrate], [undo])

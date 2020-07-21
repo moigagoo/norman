@@ -1,61 +1,18 @@
-## Syntactic sugar for model definitions and migrations
+template addLogging*: untyped =
+  ## Import ``logging`` module and add a logger if the migration is compiled with ``verbose`` flag.
 
+  when defined(verbose):
+    import logging
+    addHandler(newConsoleLogger(fmtStr = ""))
 
-{.used.}
+template migrate*(body: untyped): untyped =
+  ## Wrapper for the migration code. Executed if the migration is compiled without ``undo`` flag.
 
-
-import macros
-
-
-const
-  dbBackend* {.strdefine.}: string = ""
-  dbConnection* {.strdefine.}: string = ""
-  dbUser* {.strdefine.}: string = ""
-  dbPassword* {.strdefine.}: string = ""
-  dbDatabase* {.strdefine.}: string = ""
-
-
-macro importBackend*() =
-  ## Generate the code to import and export Norm backend defined in the project config.
-
-  newStmtList().add(
-    newNimNode(nnkImportStmt).add(
-      infix(
-        ident "norm",
-        "/",
-        ident dbBackend
-      )
-    ),
-    newNimNode(nnkExportStmt).add(
-      ident dbBackend
-    )
-  )
-
-template migrate*(body: untyped) =
-  ## Migrate block for migrations.
-
-  when defined(migrate):
+  when not defined(undo):
     body
 
-template undo*(body: untyped) =
-  ## Undo block for migrations.
+template undo*(body: untyped): untyped =
+  ## Wrapper for the migration undo code. Executed if the migration is compiled with ``undo`` flag.
 
   when defined(undo):
     body
-
-macro models*(body: untyped) =
-  ## Model definition block.
-
-  newCall(
-    ident"db",
-    newStrLitNode dbConnection,
-    newStrLitNode dbUser,
-    newStrLitNode dbPassword,
-    newStrLitNode dbDatabase,
-    body
-  )
-
-when defined(verbose):
-  import logging
-
-  addHandler newConsoleLogger(fmtStr="")
