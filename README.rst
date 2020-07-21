@@ -15,12 +15,14 @@ Norman: The Migration Manager for Norm
 
 Norman provides a CLI tool to manage migrations and a ``normanpkg/sugar`` module used in migrations.
 
--   `Repo <https://github.com/moigagoo/norman>`__
+*   `Repo <https://github.com/moigagoo/norman>`__
+
     -   `Issues <https://github.com/moigagoo/norman/issues>`__
     -   `Pull requests <https://github.com/moigagoo/norman/pulls>`__
--   `Sample app <https://github.com/moigagoo/norm-sample-webapp>`__
--   `API index <theindex.html>`__
--   `Changelog <https://github.com/moigagoo/norman/blob/develop/changelog.rst>`__
+
+*   `Sample app <https://github.com/moigagoo/norm-sample-webapp>`__
+*   `API index <theindex.html>`__
+*   `Changelog <https://github.com/moigagoo/norman/blob/develop/changelog.rst>`__
 
 
 Quickstart
@@ -60,7 +62,7 @@ Usage
 
     You can either keep all your models in this file under ``db`` macro, or distrubute them across ``models/*`` submodules and aggregate them with ``dbFromTypes``.
 
-    Initially, a placeholder model Model is defined in it to demonstrate how you can define your actual models.
+    Initially, a placeholder model Model is defined in it to demonstrate how you can define your actual models.
 
 -   ``models`` is the models submodules directory. Initially, it's empty.
 -   ``config.nim`` is the project config file. Use it to set the DB backend and credentials across your project.
