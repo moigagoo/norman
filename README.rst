@@ -75,4 +75,4 @@ Usage
 
     $ norman migrate
     Applying migrations:
-        migrations\m1595536838_init_user.nim
+        migrations/m1595536838_init_user.nim
