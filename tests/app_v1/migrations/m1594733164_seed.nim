@@ -1,18 +1,13 @@
+import strutils
 import sugar
 
-import normanpkg/sugar as norman
+include normanpkg/prelude
 
 import app/db_backend
 import app/models/user
 
 
-addLogging()
-
-
 migrate:
-  import strutils
-
-
   withDb:
     for i in 1..10:
       discard newUser("user$#@example.com" % $i).dup:

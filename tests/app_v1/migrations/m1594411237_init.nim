@@ -1,9 +1,6 @@
-import normanpkg/sugar as norman
+include normanpkg/prelude
 
 import app/db_backend
-
-
-addLogging()
 
 
 migrate:

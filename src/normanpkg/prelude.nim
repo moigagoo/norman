@@ -1,9 +1,9 @@
-template addLogging*: untyped =
-  ## Import ``logging`` module and add a logger if the migration is compiled with ``verbose`` flag.
+import logging
 
-  when defined(verbose):
-    import logging
-    addHandler(newConsoleLogger(fmtStr = ""))
+
+when defined(verbose):
+  addHandler(newConsoleLogger(fmtStr = ""))
+
 
 template migrate*(body: untyped): untyped =
   ## Wrapper for the migration code. Executed if the migration is compiled without ``undo`` flag.

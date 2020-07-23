@@ -1,14 +1,10 @@
-import normanpkg/sugar as norman
+import normanpkg/prelude
 
 import $1/db_backend
-
-
-addLogging()
+import $1/models/$2
 
 
 migrate:
-  import $1/models/$2
-
   withDb:
     db.createTables($3())
 
