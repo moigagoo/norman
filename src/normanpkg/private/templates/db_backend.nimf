@@ -1,0 +1,4 @@
+#? stdtmpl
+#proc getDbBackendCode(backend: string): string =
+import norm/$backend
+export $backend
