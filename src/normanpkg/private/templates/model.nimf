@@ -1,0 +1,12 @@
+#? stdtmpl
+#proc getModelCode(modelName: string): string =
+#  let typeName = modelName.capitalizeAscii()
+import norm/model
+
+
+type
+  $typeName* = ref object of Model
+
+
+func new$typeName*(): $typeName =
+  $typeName()

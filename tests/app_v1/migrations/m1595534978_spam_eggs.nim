@@ -1,8 +1,6 @@
-#? stdtmpl
-#proc getBlankMigCode(appName: string): string =
 include normanpkg/prelude 
 
-import $appName/db_backend
+import app/db_backend
 
 
 migrate:

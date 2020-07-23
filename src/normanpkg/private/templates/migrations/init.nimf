@@ -1,15 +1,19 @@
-import normanpkg/prelude
+#? stdtmpl
+#import strutils
+#proc getInitMigCode(appName, modelName: string): string =
+#let typeName = modelName.capitalizeAscii()
+include normanpkg/prelude
 
-import $1/db_backend
-import $1/models/$2
+import $appName/db_backend
+import $appName/models/$modelName
 
 
 migrate:
   withDb:
-    db.createTables($3())
+    db.createTables(new$typeName())
 
 undo:
-  let qry = "DROP TABLE IF EXISTS $4"
+  let qry = """DROP TABLE IF EXISTS "$typeName""""
 
   withDb:
     debug qry
