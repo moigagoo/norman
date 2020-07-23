@@ -69,10 +69,102 @@ Usage
         src/foo/models/user.nim
         migrations/m1595536838_init_user.nim
 
-4.  Apply migrations with ``norman migrate``:
+4.  Open the model in your favorite editor and add fields to it:
+
+.. code-block:: nim
+
+    import norm/model
+
+
+    type
+      User* = ref object of Model
+
+    func newUser*(): User =
+      newUser(email = "")
+
+    ⏬⏬⏬
+
+.. code-block:: nim
+
+    import norm/model
+
+
+    type
+      User* = ref object of Model
+        email*: string
+
+    func newUser*(email: string): User =
+      User(email: email)
+
+    func newUser*(): User =
+      newUser("")
+
+
+5.  Apply migrations with ``norman migrate``:
 
 .. code-block:: language
 
     $ norman migrate
     Applying migrations:
         migrations/m1595536838_init_user.nim
+
+    This creates the table for your new model.
+
+6.  Generate a migration with ``norman generate``:
+
+.. code-block::
+
+    $ norman generate -m "seed users"
+    Creating blank migration:
+        migrations/m1595537495_seed_users.nim
+
+7.  Edit the migration to actually insert rows into the DB:
+
+.. code-block:: nim
+
+    include normanpkg/prelude
+
+    import foo/db_backend
+
+
+    migrate:
+      withDb:
+        discard "Your migration code goes here."
+
+    undo:
+      withDb:
+        discard "Your undo migration code goes here."
+
+
+    ⏬⏬⏬
+
+.. code-block:: nim
+
+    include normanpkg/prelude
+
+    import strutils
+    import sugar
+
+    import foo/db_backend
+    import foo/models/user
+
+
+    migrate:
+      withDb:
+        for i in 1..10:
+          discard newUser("user$#@example.com" % $i).dup:
+            db.insert
+
+    undo:
+      withDb:
+        discard @[newUser()].dup:
+          db.select("1")
+          db.delete
+
+8.  Apply the new migration:
+
+.. code-block::
+
+    $ norman migrate
+    Applying migrations:
+        migrations\m1595537495_seed_users.nim
