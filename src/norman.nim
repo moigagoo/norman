@@ -10,7 +10,10 @@ import normanpkg/private/commands/[init_cmd, migrate_cmd, undo_cmd, model_cmd, g
 from normanpkg/prelude import nil
 
 
-initDotEnv().load()
+try:
+  initDotEnv().load()
+except:
+  discard
 
 
 when isMainModule:

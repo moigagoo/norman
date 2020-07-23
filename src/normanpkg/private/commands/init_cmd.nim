@@ -4,6 +4,7 @@ import strutils
 import ../utils
 include "../templates/db_backend.nimf"
 include "../templates/config.nimf"
+include "../templates/env.nimf"
 
 
 type
@@ -32,3 +33,9 @@ proc init*(backend: Backend = sqlite) =
   let dbBackendFile = "src" / appName / "db_backend.nim"
   echo "\t$#" % dbBackendFile
   dbBackendFile.writeFile(getDbBackendCode($backend))
+
+  let envFile = ".env"
+  echo "\t$#" % envFile
+  envFile.writeFile case backend
+    of sqlite: getSqliteEnvCode(appName)
+    of postgres: getPostgresEnvCode(appName)
