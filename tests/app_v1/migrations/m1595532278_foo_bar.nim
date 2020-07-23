@@ -1,6 +1,6 @@
 include normanpkg/prelude 
 
-import $1/db_backend
+import app/db_backend
 
 
 migrate:

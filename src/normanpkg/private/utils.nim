@@ -1,5 +1,7 @@
 import os
 import algorithm
+import strutils
+import sugar
 
 
 proc getMigrations*: seq[string] =
@@ -15,3 +17,13 @@ proc getAppName*: string =
 
   for nimbleFile in walkFiles("*.nimble"):
     return splitFile(nimbleFile).name
+
+proc getSlug*(str: string): string =
+  ## Get a slug for a given string.
+
+  let clnChars = collect(newSeq):
+    for chr in str:
+      if chr in IdentChars + Whitespace:
+        chr
+
+  clnChars.join().normalize().splitWhitespace().join("_")
