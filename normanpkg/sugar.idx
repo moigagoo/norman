@@ -1,9 +1,0 @@
-dbBackend	normanpkg/sugar.html#dbBackend	sugar: dbBackend	
-dbConnection	normanpkg/sugar.html#dbConnection	sugar: dbConnection	
-dbUser	normanpkg/sugar.html#dbUser	sugar: dbUser	
-dbPassword	normanpkg/sugar.html#dbPassword	sugar: dbPassword	
-dbDatabase	normanpkg/sugar.html#dbDatabase	sugar: dbDatabase	
-importBackend	normanpkg/sugar.html#importBackend.m	sugar: importBackend()	
-migrate	normanpkg/sugar.html#migrate.t,untyped	sugar: migrate(body: untyped)	
-undo	normanpkg/sugar.html#undo.t,untyped	sugar: undo(body: untyped)	
-models	normanpkg/sugar.html#models.m,untyped	sugar: models(body: untyped)	

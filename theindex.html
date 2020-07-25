@@ -47,21 +47,12 @@ function main() {
 
   toggleSwitch.addEventListener('change', switchTheme, false);
 
+  const currentTheme = localStorage.getItem('theme') ? localStorage.getItem('theme') : null;
+  if (currentTheme) {
+    document.documentElement.setAttribute('data-theme', currentTheme);
 
-  if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-    document.documentElement.setAttribute('data-theme', "dark");
-    toggleSwitch.checked = true;
-  } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
-    document.documentElement.setAttribute('data-theme', "light");
-    toggleSwitch.checked = false;
-  } else {
-    const currentTheme = localStorage.getItem('theme') ? localStorage.getItem('theme') : null;
-    if (currentTheme) {
-      document.documentElement.setAttribute('data-theme', currentTheme);
-
-      if (currentTheme === 'dark') {
-        toggleSwitch.checked = true;
-      }
+    if (currentTheme === 'dark') {
+      toggleSwitch.checked = true;
     }
   }
 }
@@ -72,137 +63,61 @@ function main() {
 <div class="document" id="documentId">
   <div class="container">
     <h1 class="title">Index</h1>
-    Documents: <a href="norman.html">Norman: The Migration Manager for Norm</a>.<br/><p />Modules: <a href="normanpkg/private/consts.html">normanpkg/private/consts</a>, <a href="normanpkg/private/utils.html">normanpkg/private/utils</a>, <a href="normanpkg/sugar.html">normanpkg/sugar</a>.<br/><p /><h2>API symbols</h2>
-<dl><dt><a name="binDir" href="#binDir"><span>binDir:</span></a></dt><dd><ul class="simple">
+    Documents: <a href="norman.html">Norman: Migration Manager for Norm</a>.<br/><p />Modules: <a href="normanpkg/prelude.html">normanpkg/prelude</a>, <a href="normanpkg/private/commands/generate_cmd.html">normanpkg/private/commands/generate_cmd</a>, <a href="normanpkg/private/commands/init_cmd.html">normanpkg/private/commands/init_cmd</a>, <a href="normanpkg/private/commands/migrate_cmd.html">normanpkg/private/commands/migrate_cmd</a>, <a href="normanpkg/private/commands/model_cmd.html">normanpkg/private/commands/model_cmd</a>, <a href="normanpkg/private/commands/undo_cmd.html">normanpkg/private/commands/undo_cmd</a>, <a href="normanpkg/private/utils.html">normanpkg/private/utils</a>.<br/><p /><h2>API symbols</h2>
+<dl><dt><a name="Backend" href="#Backend"><span>Backend:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
-          data-doc-search-tag="consts: binDir" href="normanpkg/private/consts.html#binDir">consts: binDir</a></li>
+          data-doc-search-tag="init_cmd: Backend" href="normanpkg/private/commands/init_cmd.html#Backend">init_cmd: Backend</a></li>
           </ul></dd>
-<dt><a name="cacheSfx" href="#cacheSfx"><span>cacheSfx:</span></a></dt><dd><ul class="simple">
+<dt><a name="generate" href="#generate"><span>generate:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
-          data-doc-search-tag="consts: cacheSfx" href="normanpkg/private/consts.html#cacheSfx">consts: cacheSfx</a></li>
+          data-doc-search-tag="generate_cmd: generate(message: string)" href="normanpkg/private/commands/generate_cmd.html#generate%2Cstring">generate_cmd: generate(message: string)</a></li>
           </ul></dd>
-<dt><a name="cfgFile" href="#cfgFile"><span>cfgFile:</span></a></dt><dd><ul class="simple">
+<dt><a name="getAppName" href="#getAppName"><span>getAppName:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
-          data-doc-search-tag="consts: cfgFile" href="normanpkg/private/consts.html#cfgFile">consts: cfgFile</a></li>
+          data-doc-search-tag="utils: getAppName(): string" href="normanpkg/private/utils.html#getAppName">utils: getAppName(): string</a></li>
           </ul></dd>
-<dt><a name="cfgTmpl" href="#cfgTmpl"><span>cfgTmpl:</span></a></dt><dd><ul class="simple">
+<dt><a name="getMigrations" href="#getMigrations"><span>getMigrations:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
-          data-doc-search-tag="consts: cfgTmpl" href="normanpkg/private/consts.html#cfgTmpl">consts: cfgTmpl</a></li>
+          data-doc-search-tag="utils: getMigrations(): seq[string]" href="normanpkg/private/utils.html#getMigrations">utils: getMigrations(): seq[string]</a></li>
           </ul></dd>
-<dt><a name="cmplCmdTmpl" href="#cmplCmdTmpl"><span>cmplCmdTmpl:</span></a></dt><dd><ul class="simple">
+<dt><a name="getSlug" href="#getSlug"><span>getSlug:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
-          data-doc-search-tag="consts: cmplCmdTmpl" href="normanpkg/private/consts.html#cmplCmdTmpl">consts: cmplCmdTmpl</a></li>
+          data-doc-search-tag="utils: getSlug(str: string): string" href="normanpkg/private/utils.html#getSlug%2Cstring">utils: getSlug(str: string): string</a></li>
           </ul></dd>
-<dt><a name="dbBackend" href="#dbBackend"><span>dbBackend:</span></a></dt><dd><ul class="simple">
+<dt><a name="init" href="#init"><span>init:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
-          data-doc-search-tag="sugar: dbBackend" href="normanpkg/sugar.html#dbBackend">sugar: dbBackend</a></li>
-          </ul></dd>
-<dt><a name="dbConnection" href="#dbConnection"><span>dbConnection:</span></a></dt><dd><ul class="simple">
-<li><a class="reference external"
-          data-doc-search-tag="sugar: dbConnection" href="normanpkg/sugar.html#dbConnection">sugar: dbConnection</a></li>
-          </ul></dd>
-<dt><a name="dbDatabase" href="#dbDatabase"><span>dbDatabase:</span></a></dt><dd><ul class="simple">
-<li><a class="reference external"
-          data-doc-search-tag="sugar: dbDatabase" href="normanpkg/sugar.html#dbDatabase">sugar: dbDatabase</a></li>
-          </ul></dd>
-<dt><a name="dbPassword" href="#dbPassword"><span>dbPassword:</span></a></dt><dd><ul class="simple">
-<li><a class="reference external"
-          data-doc-search-tag="sugar: dbPassword" href="normanpkg/sugar.html#dbPassword">sugar: dbPassword</a></li>
-          </ul></dd>
-<dt><a name="dbUser" href="#dbUser"><span>dbUser:</span></a></dt><dd><ul class="simple">
-<li><a class="reference external"
-          data-doc-search-tag="sugar: dbUser" href="normanpkg/sugar.html#dbUser">sugar: dbUser</a></li>
-          </ul></dd>
-<dt><a name="findNimbleFile" href="#findNimbleFile"><span>findNimbleFile:</span></a></dt><dd><ul class="simple">
-<li><a class="reference external"
-          data-doc-search-tag="utils: findNimbleFile(): string" href="normanpkg/private/utils.html#findNimbleFile">utils: findNimbleFile(): string</a></li>
-          </ul></dd>
-<dt><a name="getMgrNames" href="#getMgrNames"><span>getMgrNames:</span></a></dt><dd><ul class="simple">
-<li><a class="reference external"
-          data-doc-search-tag="utils: getMgrNames(): seq[string]" href="normanpkg/private/utils.html#getMgrNames">utils: getMgrNames(): seq[string]</a></li>
-          </ul></dd>
-<dt><a name="importBackend" href="#importBackend"><span>importBackend:</span></a></dt><dd><ul class="simple">
-<li><a class="reference external"
-          data-doc-search-tag="sugar: importBackend()" href="normanpkg/sugar.html#importBackend.m">sugar: importBackend()</a></li>
-          </ul></dd>
-<dt><a name="lstFile" href="#lstFile"><span>lstFile:</span></a></dt><dd><ul class="simple">
-<li><a class="reference external"
-          data-doc-search-tag="consts: lstFile" href="normanpkg/private/consts.html#lstFile">consts: lstFile</a></li>
-          </ul></dd>
-<dt><a name="mdlDir" href="#mdlDir"><span>mdlDir:</span></a></dt><dd><ul class="simple">
-<li><a class="reference external"
-          data-doc-search-tag="consts: mdlDir" href="normanpkg/private/consts.html#mdlDir">consts: mdlDir</a></li>
-          </ul></dd>
-<dt><a name="mdlFile" href="#mdlFile"><span>mdlFile:</span></a></dt><dd><ul class="simple">
-<li><a class="reference external"
-          data-doc-search-tag="consts: mdlFile" href="normanpkg/private/consts.html#mdlFile">consts: mdlFile</a></li>
-          </ul></dd>
-<dt><a name="mdlTmpl" href="#mdlTmpl"><span>mdlTmpl:</span></a></dt><dd><ul class="simple">
-<li><a class="reference external"
-          data-doc-search-tag="consts: mdlTmpl" href="normanpkg/private/consts.html#mdlTmpl">consts: mdlTmpl</a></li>
-          </ul></dd>
-<dt><a name="mgrDir" href="#mgrDir"><span>mgrDir:</span></a></dt><dd><ul class="simple">
-<li><a class="reference external"
-          data-doc-search-tag="consts: mgrDir" href="normanpkg/private/consts.html#mgrDir">consts: mgrDir</a></li>
-          </ul></dd>
-<dt><a name="mgrFile" href="#mgrFile"><span>mgrFile:</span></a></dt><dd><ul class="simple">
-<li><a class="reference external"
-          data-doc-search-tag="consts: mgrFile" href="normanpkg/private/consts.html#mgrFile">consts: mgrFile</a></li>
-          </ul></dd>
-<dt><a name="mgrFlag" href="#mgrFlag"><span>mgrFlag:</span></a></dt><dd><ul class="simple">
-<li><a class="reference external"
-          data-doc-search-tag="consts: mgrFlag" href="normanpkg/private/consts.html#mgrFlag">consts: mgrFlag</a></li>
-          </ul></dd>
-<dt><a name="mgrPfx" href="#mgrPfx"><span>mgrPfx:</span></a></dt><dd><ul class="simple">
-<li><a class="reference external"
-          data-doc-search-tag="consts: mgrPfx" href="normanpkg/private/consts.html#mgrPfx">consts: mgrPfx</a></li>
-          </ul></dd>
-<dt><a name="mgrTmpl" href="#mgrTmpl"><span>mgrTmpl:</span></a></dt><dd><ul class="simple">
-<li><a class="reference external"
-          data-doc-search-tag="consts: mgrTmpl" href="normanpkg/private/consts.html#mgrTmpl">consts: mgrTmpl</a></li>
+          data-doc-search-tag="init_cmd: init(backend: Backend = sqlite)" href="normanpkg/private/commands/init_cmd.html#init%2CBackend">init_cmd: init(backend: Backend = sqlite)</a></li>
           </ul></dd>
 <dt><a name="migrate" href="#migrate"><span>migrate:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
-          data-doc-search-tag="sugar: migrate(body: untyped)" href="normanpkg/sugar.html#migrate.t%2Cuntyped">sugar: migrate(body: untyped)</a></li>
+          data-doc-search-tag="prelude: migrate(body: untyped): untyped" href="normanpkg/prelude.html#migrate.t%2Cuntyped">prelude: migrate(body: untyped): untyped</a></li>
+          <li><a class="reference external"
+          data-doc-search-tag="migrate_cmd: migrate(verbose = false)" href="normanpkg/private/commands/migrate_cmd.html#migrate">migrate_cmd: migrate(verbose = false)</a></li>
           </ul></dd>
-<dt><a name="models" href="#models"><span>models:</span></a></dt><dd><ul class="simple">
+<dt><a name="model" href="#model"><span>model:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
-          data-doc-search-tag="sugar: models(body: untyped)" href="normanpkg/sugar.html#models.m%2Cuntyped">sugar: models(body: untyped)</a></li>
+          data-doc-search-tag="model_cmd: model(name: string)" href="normanpkg/private/commands/model_cmd.html#model%2Cstring">model_cmd: model(name: string)</a></li>
           </ul></dd>
-<dt><a name="slugified" href="#slugified"><span>slugified:</span></a></dt><dd><ul class="simple">
+<dt><a name="postgres" href="#postgres"><span>postgres:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
-          data-doc-search-tag="utils: slugified(msg: string): string" href="normanpkg/private/utils.html#slugified%2Cstring">utils: slugified(msg: string): string</a></li>
+          data-doc-search-tag="Backend.postgres" href="normanpkg/private/commands/init_cmd.html#postgres">Backend.postgres</a></li>
           </ul></dd>
-<dt><a name="tmplDir" href="#tmplDir"><span>tmplDir:</span></a></dt><dd><ul class="simple">
+<dt><a name="sqlite" href="#sqlite"><span>sqlite:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
-          data-doc-search-tag="consts: tmplDir" href="normanpkg/private/consts.html#tmplDir">consts: tmplDir</a></li>
+          data-doc-search-tag="Backend.sqlite" href="normanpkg/private/commands/init_cmd.html#sqlite">Backend.sqlite</a></li>
           </ul></dd>
 <dt><a name="undo" href="#undo"><span>undo:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
-          data-doc-search-tag="sugar: undo(body: untyped)" href="normanpkg/sugar.html#undo.t%2Cuntyped">sugar: undo(body: untyped)</a></li>
-          </ul></dd>
-<dt><a name="undoFlag" href="#undoFlag"><span>undoFlag:</span></a></dt><dd><ul class="simple">
-<li><a class="reference external"
-          data-doc-search-tag="consts: undoFlag" href="normanpkg/private/consts.html#undoFlag">consts: undoFlag</a></li>
-          </ul></dd>
-<dt><a name="undoPfx" href="#undoPfx"><span>undoPfx:</span></a></dt><dd><ul class="simple">
-<li><a class="reference external"
-          data-doc-search-tag="consts: undoPfx" href="normanpkg/private/consts.html#undoPfx">consts: undoPfx</a></li>
-          </ul></dd>
-<dt><a name="updTermMsg" href="#updTermMsg"><span>updTermMsg:</span></a></dt><dd><ul class="simple">
-<li><a class="reference external"
-          data-doc-search-tag="utils: updTermMsg(msg: string)" href="normanpkg/private/utils.html#updTermMsg%2Cstring">utils: updTermMsg(msg: string)</a></li>
-          </ul></dd>
-<dt><a name="verboseFlag" href="#verboseFlag"><span>verboseFlag:</span></a></dt><dd><ul class="simple">
-<li><a class="reference external"
-          data-doc-search-tag="consts: verboseFlag" href="normanpkg/private/consts.html#verboseFlag">consts: verboseFlag</a></li>
+          data-doc-search-tag="prelude: undo(body: untyped): untyped" href="normanpkg/prelude.html#undo.t%2Cuntyped">prelude: undo(body: untyped): untyped</a></li>
+          <li><a class="reference external"
+          data-doc-search-tag="undo_cmd: undo(verbose = false)" href="normanpkg/private/commands/undo_cmd.html#undo">undo_cmd: undo(verbose = false)</a></li>
           </ul></dd>
 </dl>
     <div class="row">
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2020-03-13 20:02:12 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2020-07-25 20:07:28 UTC</small>
       </div>
     </div>
   </div>

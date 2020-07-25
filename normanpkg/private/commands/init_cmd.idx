@@ -1,0 +1,4 @@
+sqlite	normanpkg/private/commands/init_cmd.html#sqlite	Backend.sqlite	
+postgres	normanpkg/private/commands/init_cmd.html#postgres	Backend.postgres	
+Backend	normanpkg/private/commands/init_cmd.html#Backend	init_cmd: Backend	
+init	normanpkg/private/commands/init_cmd.html#init,Backend	init_cmd: init(backend: Backend = sqlite)	
