@@ -2,7 +2,7 @@
 
 version       = "2.0.0"
 author        = "Constantine Molchanov"
-description   = "Migration manager for Norm."
+description   = "Scaffolder and migration manager for Norm."
 license       = "MIT"
 srcDir        = "src"
 installExt    = @["nim", "nims"]
@@ -12,7 +12,7 @@ bin           = @["norman"]
 
 # Dependencies
 
-requires "nim >= 1.1.0", "norm >= 1.1.2", "cligen >= 1.1.0", "dotenv >= 1.1.1"
+requires "nim >= 1.3.5", "norm >= 2.1.1", "cligen >= 1.1.0", "dotenv >= 1.1.1"
 
 task apidoc, "Generate API docs":
   --outdir:"htmldocs"
