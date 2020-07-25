@@ -1,0 +1,20 @@
+#? stdtmpl
+#import strutils
+#proc getInitMigCode(appName, modelName: string): string =
+#let typeName = modelName.capitalizeAscii()
+include normanpkg/prelude
+
+import $appName/db_backend
+import $appName/models/$modelName
+
+
+migrate:
+  withDb:
+    db.createTables(new$typeName())
+
+undo:
+  let qry = """DROP TABLE IF EXISTS "$typeName""""
+
+  withDb:
+    debug qry
+    db.exec sql qry

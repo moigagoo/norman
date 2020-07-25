@@ -1,0 +1,14 @@
+#? stdtmpl
+#proc getBlankMigCode(appName: string): string =
+include normanpkg/prelude 
+
+import $appName/db_backend
+
+
+migrate:
+  withDb:
+    discard "Your migration code goes here."
+
+undo:
+  withDb:
+    discard "Your undo migration code goes here."

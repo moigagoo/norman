@@ -1,41 +1,29 @@
 import os
+import algorithm
 import strutils
 import sugar
-import algorithm
-import terminal
-
-import consts
 
 
-proc findNimbleFile*(): string =
-  ## Find the .nimble file in the current directory and return the path to it.
+proc getMigrations*: seq[string] =
+  ## List migration file in "migrations" directory, sorted A -> z.
 
-  for path in walkFiles("*.nimble"):
-    return path
+  for migration in walkFiles("migrations/*.nim"):
+    result.add migration
 
-proc slugified*(msg: string): string =
-  ## Return a slugified version of ``message``.
+  sort result
 
-  let msgClean = collect(newSeq):
-    for chr in msg:
-      if chr in IdentChars+Whitespace:
+proc getAppName*: string =
+  ## Get the app name from the .nimble file name.
+
+  for nimbleFile in walkFiles("*.nimble"):
+    return splitFile(nimbleFile).name
+
+proc getSlug*(str: string): string =
+  ## Get a slug for a given string.
+
+  let clnChars = collect(newSeq):
+    for chr in str:
+      if chr in IdentChars + Whitespace:
         chr
 
-  msgClean.join().normalize().splitWhitespace().join("_")
-
-proc getMgrNames*(): seq[string] =
-  ## Get a sorted list of migration names that come after ``after``.
-
-  let mgrs = collect(newSeq):
-    for path in walkDirs(mgrDir/"*"):
-      if (let dirName = splitPath(path).tail; dirName != binDir):
-        dirName
-
-  sorted mgrs
-
-proc updTermMsg*(msg: string) =
-  ## Update terminal message.
-
-  eraseLine()
-  flushFile stdout
-  stdout.write(msg)
+  clnChars.join().normalize().splitWhitespace().join("_")
