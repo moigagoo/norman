@@ -20,7 +20,7 @@ Norman provides a CLI tool to manage migrations and a ``normanpkg/prelude`` modu
     -   `Issues <https://github.com/moigagoo/norman/issues>`__
     -   `Pull requests <https://github.com/moigagoo/norman/pulls>`__
 
-*   `Sample app <https://github.com/moigagoo/norm-sample-webapp>`__
+*   `Sample app <https://github.com/moigagoo/shop-api>`__
 *   `API index <theindex.html>`__
 *   `Changelog <https://github.com/moigagoo/norman/blob/develop/changelog.rst>`__
 
@@ -82,7 +82,7 @@ Usage
     func newUser*(): User =
       newUser(email = "")
 
-    ⏬⏬⏬
+⏬⏬⏬
 
 .. code-block:: nim
 
@@ -136,7 +136,7 @@ Usage
         discard "Your undo migration code goes here."
 
 
-    ⏬⏬⏬
+⏬⏬⏬
 
 .. code-block:: nim
 
@@ -167,4 +167,13 @@ Usage
 
     $ norman migrate
     Applying migrations:
-        migrations\m1595537495_seed_users.nim
+        migrations/m1595537495_seed_users.nim
+
+9.  To undo the last applied migration, run ``norman undo``:
+
+.. code-block::
+
+    $ norman undo
+
+    Undoing migration:
+        migrations/m1595537495_seed_users.nim
