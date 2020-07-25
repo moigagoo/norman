@@ -9,8 +9,8 @@ Changelog
 -   [t]—test suite improvement
 
 
-2.0.0 (WIP)
-===========
+2.0.0 (July 26, 2020)
+=====================
 
 -   [r] Complete rewrite to match Norm 2.
 
