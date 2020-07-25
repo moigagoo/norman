@@ -1,13 +1,6 @@
 version: '3'
 
 services:
-  tests:
-    build: .
-    image: norman
-    volumes:
-      - .:/usr/src/app
-    command: nimble test
-
   docs:
     build: .
     image: norman
