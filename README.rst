@@ -1,6 +1,6 @@
-**********************************
-Norman: Migration Manager for Norm
-**********************************
+*********************************************
+Norman: Scaffolder Migration Manager for Norm
+*********************************************
 
 .. image:: https://travis-ci.com/moigagoo/norman.svg?branch=develop
     :alt: Build Status
@@ -11,7 +11,7 @@ Norman: Migration Manager for Norm
     :target: https://nimble.directory/pkg/norman
 
 
-**Norman** is a migration manager for `Norm ORM <https://moigagoo.github.io/norm/norm.html>`__.
+**Norman** is a scaffolder and migration manager for `Norm ORM <https://moigagoo.github.io/norm/norm.html>`__.
 
 Norman provides a CLI tool to manage migrations and a ``normanpkg/prelude`` module that helps writing migrations.
 
@@ -38,7 +38,7 @@ Quickstart
 
 .. code-block:: nim
 
-    requires "norman"
+    requires "norman >= 2.0.0"
 
 **Note:** Norman requires the development version of Nim.
 
@@ -46,7 +46,7 @@ Quickstart
 Usage
 =====
 
-1.  Create a black Nimble package with ``nimble init``. Choose package type "binary".
+1.  Create a blank Nimble package with ``nimble init``. Choose package type "binary".
 
 2.  Run ``norman init`` inside the package directory:
 
@@ -108,7 +108,7 @@ Usage
     Applying migrations:
         migrations/m1595536838_init_user.nim
 
-    This creates the table for your new model.
+This creates the table for your new model.
 
 6.  Generate a migration with ``norman generate``:
 
