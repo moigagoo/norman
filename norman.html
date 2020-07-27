@@ -140,8 +140,8 @@ function main() {
 <span class="Keyword">type</span>
   <span class="Identifier">User</span><span class="Operator">*</span> <span class="Operator">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">Model</span>
 
-<span class="Keyword">func</span> <span class="Identifier">newUser</span><span class="Operator">*</span><span class="Punctuation">(</span><span class="Punctuation">)</span><span class="Punctuation">:</span> <span class="Identifier">User</span> <span class="Operator">=</span>
-  <span class="Identifier">newUser</span><span class="Punctuation">(</span><span class="Identifier">email</span> <span class="Operator">=</span> <span class="StringLit">&quot;&quot;</span><span class="Punctuation">)</span></pre><p>⏬⏬⏬</p>
+<span class="Keyword">func</span> <span class="Identifier">newUser</span><span class="Operator">*:</span> <span class="Identifier">User</span> <span class="Operator">=</span>
+  <span class="Identifier">newUser</span><span class="Punctuation">(</span><span class="Punctuation">)</span></pre><p>⏬⏬⏬</p>
 <pre class="listing"><span class="Keyword">import</span> <span class="Identifier">norm</span><span class="Operator">/</span><span class="Identifier">model</span>
 
 
@@ -152,7 +152,7 @@ function main() {
 <span class="Keyword">func</span> <span class="Identifier">newUser</span><span class="Operator">*</span><span class="Punctuation">(</span><span class="Identifier">email</span><span class="Punctuation">:</span> <span class="Identifier">string</span><span class="Punctuation">)</span><span class="Punctuation">:</span> <span class="Identifier">User</span> <span class="Operator">=</span>
   <span class="Identifier">User</span><span class="Punctuation">(</span><span class="Identifier">email</span><span class="Punctuation">:</span> <span class="Identifier">email</span><span class="Punctuation">)</span>
 
-<span class="Keyword">func</span> <span class="Identifier">newUser</span><span class="Operator">*</span><span class="Punctuation">(</span><span class="Punctuation">)</span><span class="Punctuation">:</span> <span class="Identifier">User</span> <span class="Operator">=</span>
+<span class="Keyword">func</span> <span class="Identifier">newUser</span><span class="Operator">*:</span> <span class="Identifier">User</span> <span class="Operator">=</span>
   <span class="Identifier">newUser</span><span class="Punctuation">(</span><span class="StringLit">&quot;&quot;</span><span class="Punctuation">)</span></pre><p>5.  Apply migrations with <tt class="docutils literal"><span class="pre">norman migrate</span></tt>:</p>
 <pre class="listing">
 $ norman migrate
@@ -214,7 +214,7 @@ Applying migrations:
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2020-07-27 06:33:20 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2020-07-27 12:55:42 UTC</small>
       </div>
     </div>
   </div>
