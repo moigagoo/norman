@@ -8,6 +8,11 @@ Changelog
 -   [r]—refactoring
 -   [t]—test suite improvement
 
+2.0.1 (WIP)
+===========
+
+-   [r] Remove redundant parens in init procs.
+
 
 2.0.0 (July 26, 2020)
 =====================
