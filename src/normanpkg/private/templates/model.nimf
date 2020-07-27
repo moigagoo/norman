@@ -8,5 +8,5 @@ type
   $typeName* = ref object of Model
 
 
-func new$typeName*(): $typeName =
+func new$typeName*: $typeName =
   $typeName()

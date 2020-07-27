@@ -79,8 +79,8 @@ Usage
     type
       User* = ref object of Model
 
-    func newUser*(): User =
-      newUser(email = "")
+    func newUser*: User =
+      newUser()
 
 ⏬⏬⏬
 
@@ -96,7 +96,7 @@ Usage
     func newUser*(email: string): User =
       User(email: email)
 
-    func newUser*(): User =
+    func newUser*: User =
       newUser("")
 
 
