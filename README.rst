@@ -1,6 +1,6 @@
-*********************************************
-Norman: Scaffolder Migration Manager for Norm
-*********************************************
+*************************************************
+Norman: Scaffolder and Migration Manager for Norm
+*************************************************
 
 .. image:: https://travis-ci.com/moigagoo/norman.svg?branch=develop
     :alt: Build Status
