@@ -5,7 +5,7 @@
 include normanpkg/prelude
 
 import $appName/db_backend
-import $appName/models/$modelName
+import models/$modelName
 
 
 migrate:

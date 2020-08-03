@@ -5,10 +5,10 @@ import sugar
 
 
 proc getMigrations*: seq[string] =
-  ## List migration file in "migrations" directory, sorted A -> z.
+  ## List dirs in "migrations" directory, sorted A -> z.
 
-  for migration in walkFiles("migrations/*.nim"):
-    result.add migration
+  for migDir in walkDirs("migrations/*"):
+    result.add migDir
 
   sort result
 

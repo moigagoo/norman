@@ -15,19 +15,19 @@ proc undo*(verbose = false) =
   for i in countdown(high(migrations), 0):
     let
       migration = migrations[i]
-      migName = splitFile(migration).name
+      migName = splitPath(migration).tail
 
     if migName <= lastMig:
       echo "Undoing migration:"
       echo "\t$#" % migration
 
-      let (outp, errC) = execCmdEx("nim -d:undo $# r $#" % [if verbose: "-d:verbose" else: "", migration])
+      let (outp, errC) = execCmdEx("nim -d:undo $# r $#" % [if verbose: "-d:verbose" else: "", migration / "migration.nim"])
 
       if errC == 0:
         if i == 0:
           writeFile("migrations" / ".last", "")
         else:
-          writeFile("migrations" / ".last", splitFile(migrations[i - 1]).name)
+          writeFile("migrations" / ".last", splitPath(migrations[i - 1]).tail)
 
       if verbose or errC != 0:
         echo outp
