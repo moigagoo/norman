@@ -8,8 +8,8 @@ Changelog
 -   [r]—refactoring
 -   [t]—test suite improvement
 
-2.1.0 (WIP)
-===========
+2.1.0 (August 3, 2020)
+======================
 
 -   [!][+] Store model state in migrations to ensure that the correct model state is applied.
 -   [f] All migrations would apply the latest model state instead of the model state they were created for.
