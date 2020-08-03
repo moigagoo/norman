@@ -1,1 +1,1 @@
-generate	normanpkg/private/commands/generate_cmd.html#generate,string	generate_cmd: generate(message: string)	
+generate	normanpkg/private/commands/generate_cmd.html#generate,string,string	generate_cmd: generate(message = &quot;&quot;; init = &quot;&quot;)	
