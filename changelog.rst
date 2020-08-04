@@ -9,6 +9,12 @@ Changelog
 -   [t]—test suite improvement
 
 
+2.1.5 (August 5, 2020)
+======================
+
+-   [f] Fix ``undo`` command.
+
+
 2.1.4 (August 5, 2020)
 ======================
 
