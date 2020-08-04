@@ -21,7 +21,7 @@ proc undo*(verbose = false) =
       echo "Undoing migration:"
       echo "\t$#" % migration
 
-      let (outp, errC) = execCmdEx("nim -d:undo $# r $#" % [if verbose: "-d:verbose" else: "", migration / "migration.nim"])
+      let (outp, errC) = execCmdEx("nim c -r -d:undo $# -o:$# --outdir:$# --nimcache:$# $#" % [if verbose: "-d:verbose" else: "", migName, "migrations" / "bin", "migrations" / "bin" / ".cache" / migName, migration / "migration.nim"])
 
       if errC == 0:
         if i == 0:
