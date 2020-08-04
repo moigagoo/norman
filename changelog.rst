@@ -9,6 +9,12 @@ Changelog
 -   [t]—test suite improvement
 
 
+2.1.3 (August 4, 2020)
+======================
+
+-   [+] Add ``--compile`` flag to ``norman migrate`` command.
+
+
 2.1.2 (August 4, 2020)
 ======================
 
