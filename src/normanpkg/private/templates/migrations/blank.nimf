@@ -1,14 +1,20 @@
 #? stdtmpl
 #proc getBlankMigCode(appName: string): string =
-include normanpkg/prelude 
+include normanpkg/prelude
 
 import $appName/db_backend
 
 
 migrate:
   withDb:
-    discard "Your migration code goes here."
+    let qry = """ALTER TABLE "Table" ADD COLUMN column TYPE NOT NULL DEFAULT value"""
+
+    debug qry
+    db.exec sql qry
 
 undo:
   withDb:
-    discard "Your undo migration code goes here."
+    let qry = """ALTER TABLE "Table" DROP COLUMN column"""
+
+    debug qry
+    db.exec sql qry

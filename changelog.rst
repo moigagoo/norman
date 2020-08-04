@@ -9,6 +9,12 @@ Changelog
 -   [t]—test suite improvement
 
 
+2.1.4 (August 5, 2020)
+======================
+
+-   [+] Improve blank migration template.
+
+
 2.1.3 (August 4, 2020)
 ======================
 
