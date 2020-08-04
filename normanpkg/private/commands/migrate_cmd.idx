@@ -1,1 +1,1 @@
-migrate	normanpkg/private/commands/migrate_cmd.html#migrate	migrate_cmd: migrate(verbose = false)	
+migrate	normanpkg/private/commands/migrate_cmd.html#migrate	migrate_cmd: migrate(compile = false; verbose = false)	
