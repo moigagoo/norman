@@ -8,7 +8,8 @@ proc getMigrations*: seq[string] =
   ## List dirs in "migrations" directory, sorted A -> z.
 
   for migDir in walkDirs("migrations/*"):
-    result.add migDir
+    if splitPath(migDir).tail != "bin":
+      result.add migDir
 
   sort result
 

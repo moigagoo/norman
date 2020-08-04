@@ -18,7 +18,7 @@ proc migrate*(verbose = false) =
     if migName > lastMig:
       echo "\t$#" % migration
 
-      let (outp, errC) = execCmdEx("nim $# r $#" % [if verbose: "-d:verbose" else: "", migration / "migration.nim"])
+      let (outp, errC) = execCmdEx("nim c -r $# -o:$# --outdir:$# --nimcache:$# $#" % [if verbose: "-d:verbose" else: "", migName, "migrations" / "bin", "migrations" / "bin" / ".cache" / migName, migration / "migration.nim"])
 
       if errC == 0:
         writeFile("migrations" / ".last", migName)
