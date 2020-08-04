@@ -8,6 +8,13 @@ Changelog
 -   [r]—refactoring
 -   [t]—test suite improvement
 
+
+2.1.1 (August 4, 2020)
+======================
+
+-   [+] Add ``compile`` command to precompile migrations in parallel before execution.
+
+
 2.1.0 (August 3, 2020)
 ======================
 
