@@ -38,9 +38,7 @@ Quickstart
 
 .. code-block:: nim
 
-    requires "norman >= 2.0.0"
-
-**Note:** Norman requires the development version of Nim.
+    requires "norman >= 2.1.0"
 
 
 Usage

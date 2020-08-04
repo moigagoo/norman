@@ -9,6 +9,12 @@ Changelog
 -   [t]—test suite improvement
 
 
+2.1.2 (August 4, 2020)
+======================
+
+-   [+] Require Nim 1.2.6 instead of the development version.
+
+
 2.1.1 (August 4, 2020)
 ======================
 
