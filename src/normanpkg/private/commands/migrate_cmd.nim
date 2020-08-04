@@ -2,11 +2,15 @@ import os
 import osproc
 import strutils
 
+import compile_cmd
 import ../utils
 
 
-proc migrate*(verbose = false) =
+proc migrate*(compile = false, verbose = false) =
   ## Apply migrations.
+
+  if compile:
+    compile()
 
   let lastMig = if fileExists("migrations" / ".last"): readFile("migrations" / ".last") else: ""
 
