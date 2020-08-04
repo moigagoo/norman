@@ -9,8 +9,8 @@ Changelog
 -   [t]—test suite improvement
 
 
-2.1.1 (WIP)
-===========
+2.1.1 (August 4, 2020)
+======================
 
 -   [+] Add ``compile`` command to precompile migrations in parallel before execution.
 
