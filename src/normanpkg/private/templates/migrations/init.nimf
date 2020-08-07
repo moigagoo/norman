@@ -10,11 +10,12 @@ import models/$modelName
 
 migrate:
   withDb:
-    db.createTables(new$typeName())
+    db.transaction:
+      db.createTables(new$typeName())
 
 undo:
-  let qry = """DROP TABLE IF EXISTS "$typeName""""
-
   withDb:
+    let qry = """DROP TABLE IF EXISTS "$typeName""""
+
     debug qry
     db.exec sql qry
