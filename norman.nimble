@@ -15,7 +15,7 @@ bin           = @["norman"]
 requires "nim >= 1.2.6", "norm >= 2.1.4", "cligen >= 1.1.0", "dotenv >= 1.1.1"
 
 task apidoc, "Generate API docs":
-  --outdir:"htmldocs"
+  --outdir: "htmldocs"
   --git.url: https://github.com/moigagoo/norman/
   --git.commit: develop
   --project
@@ -30,3 +30,5 @@ task docs, "Generate docs":
   rmDir "htmldocs"
   exec "nimble apidoc"
   exec "nimble idx"
+  exec "nim rst2html -o:htmldocs/index.html README.rst"
+  cpFile("CNAME", "htmldocs/CNAME")

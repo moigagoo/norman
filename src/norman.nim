@@ -1,5 +1,3 @@
-## .. include:: ../README.rst
-
 {.warning[UnusedImport]: off.}
 
 
