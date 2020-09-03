@@ -47,12 +47,21 @@ function main() {
 
   toggleSwitch.addEventListener('change', switchTheme, false);
 
-  const currentTheme = localStorage.getItem('theme') ? localStorage.getItem('theme') : null;
-  if (currentTheme) {
-    document.documentElement.setAttribute('data-theme', currentTheme);
 
-    if (currentTheme === 'dark') {
-      toggleSwitch.checked = true;
+  if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+    document.documentElement.setAttribute('data-theme', "dark");
+    toggleSwitch.checked = true;
+  } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
+    document.documentElement.setAttribute('data-theme', "light");
+    toggleSwitch.checked = false;
+  } else {
+    const currentTheme = localStorage.getItem('theme') ? localStorage.getItem('theme') : null;
+    if (currentTheme) {
+      document.documentElement.setAttribute('data-theme', currentTheme);
+
+      if (currentTheme === 'dark') {
+        toggleSwitch.checked = true;
+      }
     }
   }
 }
@@ -63,7 +72,7 @@ function main() {
 <div class="document" id="documentId">
   <div class="container">
     <h1 class="title">Index</h1>
-    Documents: <a href="norman.html">Norman: Scaffolder and Migration Manager for Norm</a>.<br/><p />Modules: <a href="normanpkg/prelude.html">normanpkg/prelude</a>, <a href="normanpkg/private/commands/compile_cmd.html">normanpkg/private/commands/compile_cmd</a>, <a href="normanpkg/private/commands/generate_cmd.html">normanpkg/private/commands/generate_cmd</a>, <a href="normanpkg/private/commands/init_cmd.html">normanpkg/private/commands/init_cmd</a>, <a href="normanpkg/private/commands/migrate_cmd.html">normanpkg/private/commands/migrate_cmd</a>, <a href="normanpkg/private/commands/model_cmd.html">normanpkg/private/commands/model_cmd</a>, <a href="normanpkg/private/commands/undo_cmd.html">normanpkg/private/commands/undo_cmd</a>, <a href="normanpkg/private/utils.html">normanpkg/private/utils</a>.<br/><p /><h2>API symbols</h2>
+    Modules: <a href="normanpkg/prelude.html">normanpkg/prelude</a>, <a href="normanpkg/private/commands/compile_cmd.html">normanpkg/private/commands/compile_cmd</a>, <a href="normanpkg/private/commands/generate_cmd.html">normanpkg/private/commands/generate_cmd</a>, <a href="normanpkg/private/commands/init_cmd.html">normanpkg/private/commands/init_cmd</a>, <a href="normanpkg/private/commands/migrate_cmd.html">normanpkg/private/commands/migrate_cmd</a>, <a href="normanpkg/private/commands/model_cmd.html">normanpkg/private/commands/model_cmd</a>, <a href="normanpkg/private/commands/undo_cmd.html">normanpkg/private/commands/undo_cmd</a>, <a href="normanpkg/private/utils.html">normanpkg/private/utils</a>.<br/><p /><h2>API symbols</h2>
 <dl><dt><a name="Backend" href="#Backend"><span>Backend:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="init_cmd: Backend" href="normanpkg/private/commands/init_cmd.html#Backend">init_cmd: Backend</a></li>
@@ -121,7 +130,7 @@ function main() {
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2020-08-16 13:57:36 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2020-09-03 20:28:29 UTC</small>
       </div>
     </div>
   </div>

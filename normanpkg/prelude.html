@@ -20,7 +20,7 @@
 <title>normanpkg/prelude</title>
 <link rel="stylesheet" type="text/css" href="../nimdoc.out.css">
 
-<script type="text/javascript" src="../dochack.js"></script>
+<script type="text/javascript" src="dochack.js"></script>
 
 <script type="text/javascript">
 function main() {
@@ -47,12 +47,21 @@ function main() {
 
   toggleSwitch.addEventListener('change', switchTheme, false);
 
-  const currentTheme = localStorage.getItem('theme') ? localStorage.getItem('theme') : null;
-  if (currentTheme) {
-    document.documentElement.setAttribute('data-theme', currentTheme);
 
-    if (currentTheme === 'dark') {
-      toggleSwitch.checked = true;
+  if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+    document.documentElement.setAttribute('data-theme', "dark");
+    toggleSwitch.checked = true;
+  } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
+    document.documentElement.setAttribute('data-theme', "light");
+    toggleSwitch.checked = false;
+  } else {
+    const currentTheme = localStorage.getItem('theme') ? localStorage.getItem('theme') : null;
+    if (currentTheme) {
+      document.documentElement.setAttribute('data-theme', currentTheme);
+
+      if (currentTheme === 'dark') {
+        toggleSwitch.checked = true;
+      }
     }
   }
 }
@@ -74,9 +83,6 @@ function main() {
   </div>
   <div id="global-links">
     <ul class="simple">
-    <li>
-      <a href="../theindex.html">Index</a>
-    </li>
     </ul>
   </div>
   <div id="searchInputDiv">
@@ -118,7 +124,7 @@ function main() {
 
 Wrapper for the migration code. Executed if the migration is compiled without <tt class="docutils literal"><span class="pre">undo</span></tt> flag.
 &nbsp;&nbsp;<a
-href="https :// github.com / moigagoo / norman / --git.commit/tree/devel/src/normanpkg/prelude.nim#L10"
+href="https :// github.com / moigagoo / norman / --git.commit/tree/version-1-2/src/normanpkg/prelude.nim#L10"
 class="link-seesrc" target="_blank">Source</a>
 <a href="https :// github.com / moigagoo / norman / --git.commit/edit/devel/src/normanpkg/prelude.nim#L10" class="link-seesrc" target="_blank" >Edit</a>
 
@@ -129,7 +135,7 @@ class="link-seesrc" target="_blank">Source</a>
 
 Wrapper for the migration undo code. Executed if the migration is compiled with <tt class="docutils literal"><span class="pre">undo</span></tt> flag.
 &nbsp;&nbsp;<a
-href="https :// github.com / moigagoo / norman / --git.commit/tree/devel/src/normanpkg/prelude.nim#L16"
+href="https :// github.com / moigagoo / norman / --git.commit/tree/version-1-2/src/normanpkg/prelude.nim#L16"
 class="link-seesrc" target="_blank">Source</a>
 <a href="https :// github.com / moigagoo / norman / --git.commit/edit/devel/src/normanpkg/prelude.nim#L16" class="link-seesrc" target="_blank" >Edit</a>
 
@@ -144,7 +150,7 @@ class="link-seesrc" target="_blank">Source</a>
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2020-08-16 13:57:35 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2020-09-03 20:28:28 UTC</small>
       </div>
     </div>
   </div>
