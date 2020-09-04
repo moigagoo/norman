@@ -11,7 +11,7 @@ Norman: Scaffolder and Migration Manager for Norm
     :target: https://nimble.directory/pkg/norman
 
 
-**Norman** is a scaffolder and migration manager for `Norm ORM <https://moigagoo.github.io/norm/norm.html>`__.
+**Norman** is a scaffolder and migration manager for `Norm ORM <https://norm.nim.town>`__.
 
 Norman provides a CLI tool to manage migrations and a ``normanpkg/prelude`` module that helps writing migrations.
 
