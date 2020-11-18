@@ -20,7 +20,7 @@
 <title>normanpkg/private/utils</title>
 <link rel="stylesheet" type="text/css" href="../../nimdoc.out.css">
 
-<script type="text/javascript" src="dochack.js"></script>
+<script type="text/javascript" src="../../dochack.js"></script>
 
 <script type="text/javascript">
 function main() {
@@ -47,21 +47,12 @@ function main() {
 
   toggleSwitch.addEventListener('change', switchTheme, false);
 
+  const currentTheme = localStorage.getItem('theme') ? localStorage.getItem('theme') : null;
+  if (currentTheme) {
+    document.documentElement.setAttribute('data-theme', currentTheme);
 
-  if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-    document.documentElement.setAttribute('data-theme', "dark");
-    toggleSwitch.checked = true;
-  } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
-    document.documentElement.setAttribute('data-theme', "light");
-    toggleSwitch.checked = false;
-  } else {
-    const currentTheme = localStorage.getItem('theme') ? localStorage.getItem('theme') : null;
-    if (currentTheme) {
-      document.documentElement.setAttribute('data-theme', currentTheme);
-
-      if (currentTheme === 'dark') {
-        toggleSwitch.checked = true;
-      }
+    if (currentTheme === 'dark') {
+      toggleSwitch.checked = true;
     }
   }
 }
@@ -83,6 +74,9 @@ function main() {
   </div>
   <div id="global-links">
     <ul class="simple">
+    <li>
+      <a href="../../theindex.html">Index</a>
+    </li>
     </ul>
   </div>
   <div id="searchInputDiv">
@@ -100,12 +94,21 @@ function main() {
 <li>
   <a class="reference reference-toplevel" href="#12" id="62">Procs</a>
   <ul class="simple simple-toc-section">
+      <ul class="simple nested-toc-section">getAppName
+      <li><a class="reference" href="#getAppName"
+    title="getAppName(): string">getAppName<span class="attachedType"></span></a></li>
+
+  </ul>
+  <ul class="simple nested-toc-section">getSlug
+      <li><a class="reference" href="#getSlug%2Cstring"
+    title="getSlug(str: string): string">getSlug,string<span class="attachedType"></span></a></li>
+
+  </ul>
+  <ul class="simple nested-toc-section">getMigrations
       <li><a class="reference" href="#getMigrations"
-    title="getMigrations(): seq[string]"><wbr />get<wbr />Migrations<span class="attachedType"></span></a></li>
-  <li><a class="reference" href="#getAppName"
-    title="getAppName(): string"><wbr />get<wbr />App<wbr />Name<span class="attachedType"></span></a></li>
-  <li><a class="reference" href="#getSlug%2Cstring"
-    title="getSlug(str: string): string"><wbr />get<wbr />Slug<span class="attachedType"></span></a></li>
+    title="getMigrations(): seq[string]">getMigrations<span class="attachedType"></span></a></li>
+
+  </ul>
 
   </ul>
 </li>
@@ -125,10 +128,6 @@ function main() {
 <dd>
 
 List dirs in &quot;migrations&quot; directory, sorted A -&gt; z.
-&nbsp;&nbsp;<a
-href="https :// github.com / moigagoo / norman / --git.commit/tree/version-1-2/src/normanpkg/private/utils.nim#L7"
-class="link-seesrc" target="_blank">Source</a>
-<a href="https :// github.com / moigagoo / norman / --git.commit/edit/devel/src/normanpkg/private/utils.nim#L7" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 <a id="getAppName"></a>
@@ -136,10 +135,6 @@ class="link-seesrc" target="_blank">Source</a>
 <dd>
 
 Get the app name from the .nimble file name.
-&nbsp;&nbsp;<a
-href="https :// github.com / moigagoo / norman / --git.commit/tree/version-1-2/src/normanpkg/private/utils.nim#L16"
-class="link-seesrc" target="_blank">Source</a>
-<a href="https :// github.com / moigagoo / norman / --git.commit/edit/devel/src/normanpkg/private/utils.nim#L16" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 <a id="getSlug,string"></a>
@@ -147,10 +142,6 @@ class="link-seesrc" target="_blank">Source</a>
 <dd>
 
 Get a slug for a given string.
-&nbsp;&nbsp;<a
-href="https :// github.com / moigagoo / norman / --git.commit/tree/version-1-2/src/normanpkg/private/utils.nim#L22"
-class="link-seesrc" target="_blank">Source</a>
-<a href="https :// github.com / moigagoo / norman / --git.commit/edit/devel/src/normanpkg/private/utils.nim#L22" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 
@@ -163,7 +154,7 @@ class="link-seesrc" target="_blank">Source</a>
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2020-09-04 03:48:09 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2020-11-18 19:49:56 UTC</small>
       </div>
     </div>
   </div>

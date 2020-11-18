@@ -20,7 +20,7 @@
 <title>normanpkg/private/commands/init_cmd</title>
 <link rel="stylesheet" type="text/css" href="../../../nimdoc.out.css">
 
-<script type="text/javascript" src="dochack.js"></script>
+<script type="text/javascript" src="../../../dochack.js"></script>
 
 <script type="text/javascript">
 function main() {
@@ -47,21 +47,12 @@ function main() {
 
   toggleSwitch.addEventListener('change', switchTheme, false);
 
+  const currentTheme = localStorage.getItem('theme') ? localStorage.getItem('theme') : null;
+  if (currentTheme) {
+    document.documentElement.setAttribute('data-theme', currentTheme);
 
-  if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-    document.documentElement.setAttribute('data-theme', "dark");
-    toggleSwitch.checked = true;
-  } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
-    document.documentElement.setAttribute('data-theme', "light");
-    toggleSwitch.checked = false;
-  } else {
-    const currentTheme = localStorage.getItem('theme') ? localStorage.getItem('theme') : null;
-    if (currentTheme) {
-      document.documentElement.setAttribute('data-theme', currentTheme);
-
-      if (currentTheme === 'dark') {
-        toggleSwitch.checked = true;
-      }
+    if (currentTheme === 'dark') {
+      toggleSwitch.checked = true;
     }
   }
 }
@@ -83,6 +74,9 @@ function main() {
   </div>
   <div id="global-links">
     <ul class="simple">
+    <li>
+      <a href="../../../theindex.html">Index</a>
+    </li>
     </ul>
   </div>
   <div id="searchInputDiv">
@@ -115,8 +109,11 @@ function main() {
 <li>
   <a class="reference reference-toplevel" href="#12" id="62">Procs</a>
   <ul class="simple simple-toc-section">
+      <ul class="simple nested-toc-section">init
       <li><a class="reference" href="#init%2CBackend"
-    title="init(backend: Backend = sqlite)"><wbr />init<span class="attachedType">Backend</span></a></li>
+    title="init(backend: Backend = sqlite)">init,Backend<span class="attachedType">Backend</span></a></li>
+
+  </ul>
 
   </ul>
 </li>
@@ -142,10 +139,6 @@ function main() {
 <dd>
 
 
-&nbsp;&nbsp;<a
-href="https :// github.com / moigagoo / norman / --git.commit/tree/version-1-2/src/normanpkg/private/commands/init_cmd.nim#L11"
-class="link-seesrc" target="_blank">Source</a>
-<a href="https :// github.com / moigagoo / norman / --git.commit/edit/devel/src/normanpkg/private/commands/init_cmd.nim#L11" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 
@@ -159,10 +152,6 @@ class="link-seesrc" target="_blank">Source</a>
 <dd>
 
 Scaffold folders and configs for migrations.
-&nbsp;&nbsp;<a
-href="https :// github.com / moigagoo / norman / --git.commit/tree/version-1-2/src/normanpkg/private/commands/init_cmd.nim#L14"
-class="link-seesrc" target="_blank">Source</a>
-<a href="https :// github.com / moigagoo / norman / --git.commit/edit/devel/src/normanpkg/private/commands/init_cmd.nim#L14" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 
@@ -175,7 +164,7 @@ class="link-seesrc" target="_blank">Source</a>
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2020-09-04 03:48:09 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2020-11-18 19:49:56 UTC</small>
       </div>
     </div>
   </div>

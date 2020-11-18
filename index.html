@@ -47,21 +47,12 @@ function main() {
 
   toggleSwitch.addEventListener('change', switchTheme, false);
 
+  const currentTheme = localStorage.getItem('theme') ? localStorage.getItem('theme') : null;
+  if (currentTheme) {
+    document.documentElement.setAttribute('data-theme', currentTheme);
 
-  if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-    document.documentElement.setAttribute('data-theme', "dark");
-    toggleSwitch.checked = true;
-  } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
-    document.documentElement.setAttribute('data-theme', "light");
-    toggleSwitch.checked = false;
-  } else {
-    const currentTheme = localStorage.getItem('theme') ? localStorage.getItem('theme') : null;
-    if (currentTheme) {
-      document.documentElement.setAttribute('data-theme', currentTheme);
-
-      if (currentTheme === 'dark') {
-        toggleSwitch.checked = true;
-      }
+    if (currentTheme === 'dark') {
+      toggleSwitch.checked = true;
     }
   }
 }
@@ -72,7 +63,7 @@ function main() {
 <div class="document" id="documentId">
   <div class="container">
     <h1 class="title">Norman: Scaffolder and Migration Manager for Norm</h1>
-    <img src="https://travis-ci.com/moigagoo/norman.svg?branch=develop" alt="Build Status"/><img src="https://raw.githubusercontent.com/yglukhov/nimble-tag/master/nimble.png" alt="Nimble"/><p><strong>Norman</strong> is a scaffolder and migration manager for <a class="reference external" href="https://norm.nim.town">Norm ORM</a>.</p>
+    <a class="reference external" href="https://travis-ci.com/moigagoo/norman"><img src="https://travis-ci.com/moigagoo/norman.svg?branch=develop" alt="Build Status"/></a><a class="reference external" href="https://nimble.directory/pkg/norman"><img src="https://raw.githubusercontent.com/yglukhov/nimble-tag/master/nimble.png" alt="Nimble"/></a><p><strong>Norman</strong> is a scaffolder and migration manager for <a class="reference external" href="https://norm.nim.town">Norm ORM</a>.</p>
 <p>Norman provides a CLI tool to manage migrations and a <tt class="docutils literal"><span class="pre">normanpkg/prelude</span></tt> module that helps writing migrations.</p>
 <ul class="simple"><li><a class="reference external" href="https://github.com/moigagoo/norman">Repo</a><ul class="simple"><li><a class="reference external" href="https://github.com/moigagoo/norman/issues">Issues</a></li>
 <li><a class="reference external" href="https://github.com/moigagoo/norman/pulls">Pull requests</a></li>
@@ -172,7 +163,7 @@ Applying migrations:
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2020-09-04 03:48:09 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2020-11-18 19:49:56 UTC</small>
       </div>
     </div>
   </div>
