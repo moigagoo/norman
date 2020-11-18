@@ -6,4 +6,5 @@ services:
     image: norman
     volumes:
       - .:/usr/src/app
-    command: nimble docs
+    entrypoint: nimble
+    command: docs
