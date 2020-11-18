@@ -9,6 +9,18 @@ Changelog
 -   [t]—test suite improvement
 
 
+2.1.7 (November 18, 2020)
+=========================
+
+-   [r] Update requirements, clean up Docker files, minor code formatting.
+
+
+2.1.6 (August 8, 2020)
+======================
+
+-   [+] Wrap queries in migration templates in transactions.
+
+
 2.1.5 (August 5, 2020)
 ======================
 

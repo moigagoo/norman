@@ -7,14 +7,16 @@ import $appName/db_backend
 
 migrate:
   withDb:
-    let qry = """ALTER TABLE "Table" ADD COLUMN column TYPE NOT NULL DEFAULT value"""
+    db.transaction:
+      let qry = """ALTER TABLE "Table" ADD COLUMN column TYPE NOT NULL DEFAULT value"""
 
-    debug qry
-    db.exec sql qry
+      debug qry
+      db.exec sql qry
 
 undo:
   withDb:
-    let qry = """ALTER TABLE "Table" DROP COLUMN column"""
+    db.transaction:
+      let qry = """ALTER TABLE "Table" DROP COLUMN column"""
 
-    debug qry
-    db.exec sql qry
+      debug qry
+      db.exec sql qry

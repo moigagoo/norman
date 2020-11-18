@@ -1,6 +1,6 @@
 # Package
 
-version       = "2.1.5"
+version       = "2.1.7"
 author        = "Constantine Molchanov"
 description   = "Scaffolder and migration manager for Norm."
 license       = "MIT"
@@ -12,21 +12,10 @@ bin           = @["norman"]
 
 # Dependencies
 
-requires "nim >= 1.2.6", "norm >= 2.1.1", "cligen >= 1.1.0", "dotenv >= 1.1.1"
-
-task apidoc, "Generate API docs":
-  --outdir:"htmldocs"
-  --git.url: https://github.com/moigagoo/norman/
-  --git.commit: develop
-  --project
-  --index:on
-
-  setCommand "doc", "src/norman"
-
-task idx, "Generate index":
-  selfExec "buildIndex --out:htmldocs/theindex.html htmldocs"
+requires "nim >= 1.4.0", "norm >= 2.2.1", "cligen >= 1.1.0", "dotenv >= 1.1.1"
 
 task docs, "Generate docs":
   rmDir "htmldocs"
-  exec "nimble apidoc"
-  exec "nimble idx"
+  exec "nimble doc --outdir:htmldocs --project --index:on src/norman"
+  exec "nim rst2html -o:htmldocs/index.html README.rst"
+  cpFile("CNAME", "htmldocs/CNAME")
