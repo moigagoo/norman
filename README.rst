@@ -20,7 +20,7 @@ Norman provides a CLI tool to manage migrations and a ``normanpkg/prelude`` modu
     -   `Issues <https://github.com/moigagoo/norman/issues>`__
     -   `Pull requests <https://github.com/moigagoo/norman/pulls>`__
 
-*   `Sample app <https://github.com/moigagoo/shop-api>`__
+*   `Sample app <https://github.com/moigagoo/shopapp>`__
 *   `API index <theindex.html>`__
 *   `Changelog <https://github.com/moigagoo/norman/blob/develop/changelog.rst>`__
 
