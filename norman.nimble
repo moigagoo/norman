@@ -12,7 +12,7 @@ bin           = @["norman"]
 
 # Dependencies
 
-requires "nim >= 1.4.0", "norm >= 2.2.1", "cligen >= 1.1.0", "dotenv >= 1.1.1"
+requires "nim >= 1.4.0", "norm >= 2.2.1", "cligen >= 1.1.0", "dotenv >= 2.0.1"
 
 task docs, "Generate docs":
   rmDir "htmldocs"
