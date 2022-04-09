@@ -16,10 +16,11 @@ from normanpkg/prelude import nil
 
 
 try:
-  initDotEnv().load()
+  load()
 except:
   discard
 
 
 when isMainModule:
   dispatchMulti([init], [migrate], [undo], [model], [generate], [compile])
+
