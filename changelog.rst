@@ -8,6 +8,11 @@ Changelog
 -   [r]—refactoring
 -   [t]—test suite improvement
 
+2.1.8 (April 19, 2022)
+======================
+
+-   [f] Update dotenv.
+
 
 2.1.7 (November 18, 2020)
 =========================
