@@ -1,6 +1,6 @@
 # Package
 
-version       = "2.1.8"
+version       = "2.1.9"
 author        = "Constantine Molchanov"
 description   = "Scaffolder and migration manager for Norm."
 license       = "MIT"
