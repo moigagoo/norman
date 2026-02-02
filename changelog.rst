@@ -7,6 +7,14 @@ Changelog
 -   [f]—bugfix
 -   [r]—refactoring
 -   [t]—test suite improvement
+-   [d]—documentation improvement
+
+
+2.1.9 (February 2, 2026)
+======================
+
+-   [d] Update the docs (read more: `#11 <https://github.com/moigagoo/norman/issues/11>`__).
+
 
 2.1.8 (April 19, 2022)
 ======================
