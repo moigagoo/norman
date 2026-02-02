@@ -20,7 +20,7 @@ Norman provides a CLI tool to manage migrations and a ``normanpkg/prelude`` modu
     -   `Issues <https://github.com/moigagoo/norman/issues>`__
     -   `Pull requests <https://github.com/moigagoo/norman/pulls>`__
 
-*   `Sample app <https://github.com/moigagoo/shop-api>`__
+*   `Sample app <https://github.com/moigagoo/shopapp>`__
 *   `API index <theindex.html>`__
 *   `Changelog <https://github.com/moigagoo/norman/blob/develop/changelog.rst>`__
 
@@ -39,6 +39,16 @@ Quickstart
 .. code-block:: nim
 
     requires "norman >= 2.1.0"
+
+
+Note for Nim 2.0 users
+----------------------
+
+If you are using Nim 2.0 or later, you might need to enable ``deepcopy`` support in your project's ``nim.cfg`` or ``config.nims`` file:
+
+.. code-block::
+
+    deepcopy:on
 
 
 Usage
@@ -63,9 +73,8 @@ Usage
 .. code-block::
 
     $ norman model -n user
-    Creating blank model and init migration:
+    Creating blank model:
         src/foo/models/user.nim
-        migrations/m1595536838_init_user.nim
 
 4.  Open the model in your favorite editor and add fields to it:
 
@@ -78,7 +87,7 @@ Usage
       User* = ref object of Model
 
     func newUser*: User =
-      newUser()
+      User()
 
 ⏬⏬⏬
 
@@ -98,25 +107,38 @@ Usage
       newUser("")
 
 
-5.  Apply migrations with ``norman migrate``:
+5.  Generate a migration for the new model with ``norman generate``:
+
+.. code-block::
+
+    $ norman generate -i user
+    Creating blank migration:
+        migrations/1595536838_init_user/migration.nim
+    Copying models:
+        src/foo/models
+
+
+6.  Apply migrations with ``norman migrate``:
 
 .. code-block:: language
 
     $ norman migrate
     Applying migrations:
-        migrations/m1595536838_init_user.nim
+        migrations/1595536838_init_user
 
 This creates the table for your new model.
 
-6.  Generate a migration with ``norman generate``:
+7.  Generate a migration with ``norman generate``:
 
 .. code-block::
 
     $ norman generate -m "seed users"
     Creating blank migration:
-        migrations/m1595537495_seed_users.nim
+        migrations/1595537495_seed_users/migration.nim
+    Copying models:
+        src/foo/models
 
-7.  Edit the migration to actually insert rows into the DB:
+8.  Edit the migration to actually insert rows into the DB:
 
 .. code-block:: nim
 
@@ -127,11 +149,19 @@ This creates the table for your new model.
 
     migrate:
       withDb:
-        discard "Your migration code goes here."
+        db.transaction:
+          let qry = """ALTER TABLE "Table" ADD COLUMN column TYPE NOT NULL DEFAULT value"""
+
+          debug qry
+          db.exec sql qry
 
     undo:
       withDb:
-        discard "Your undo migration code goes here."
+        db.transaction:
+          let qry = """ALTER TABLE "Table" DROP COLUMN column"""
+
+          debug qry
+          db.exec sql qry
 
 
 ⏬⏬⏬
@@ -144,34 +174,67 @@ This creates the table for your new model.
     import sugar
 
     import foo/db_backend
-    import foo/models/user
+    import models/user
 
 
     migrate:
       withDb:
-        for i in 1..10:
-          discard newUser("user$#@example.com" % $i).dup:
-            db.insert
+        db.transaction:
+          for i in 1..10:
+            discard newUser("user$#@example.com" % $i).dup:
+              db.insert
 
     undo:
       withDb:
-        discard @[newUser()].dup:
-          db.select("1")
-          db.delete
+        db.transaction:
+          discard @[newUser()].dup:
+            db.select("1")
+            db.delete
 
-8.  Apply the new migration:
+9.  Apply the new migration:
 
 .. code-block::
 
     $ norman migrate
     Applying migrations:
-        migrations/m1595537495_seed_users.nim
+        migrations/1595537495_seed_users
 
-9.  To undo the last applied migration, run ``norman undo``:
+10. To undo the last applied migration, run ``norman undo``:
 
 .. code-block::
 
     $ norman undo
 
     Undoing migration:
-        migrations/m1595537495_seed_users.nim
+        migrations/1595537495_seed_users
+
+
+Troubleshooting
+===============
+
+"Error: cannot open file: normanpkg/prelude"
+--------------------------------------------
+
+If you see this error, it means the migration cannot find the Norman library.
+To fix it, edit ``migrations/config.nims`` and add this line to the end:
+
+.. code-block:: nim
+
+    include "../nimble.paths"
+
+And ensure the path to your source is correct (you may need an extra ``../``):
+
+.. code-block:: nim
+
+    switch("path", "$projectDir/../../../src")
+
+
+"Error: 'deepcopy' support has to be enabled"
+---------------------------------------------
+
+If you are using Nim 2.0 or newer, you must enable ``deepcopy`` for migrations to work.
+Add this line to your ``migrations/config.nims``:
+
+.. code-block:: nim
+
+    switch("deepcopy", "on")
