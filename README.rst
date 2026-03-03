@@ -120,7 +120,7 @@ Usage
 
 6.  Apply migrations with ``norman migrate``:
 
-.. code-block:: language
+.. code-block::
 
     $ norman migrate
     Applying migrations:
@@ -215,19 +215,28 @@ Troubleshooting
 "Error: cannot open file: normanpkg/prelude"
 --------------------------------------------
 
-If you see this error, it means the migration cannot find the Norman library.
-To fix it, edit ``migrations/config.nims`` and add this line to the end:
+If you see this error, it is likely that you are using ``nimble setup`` (project isolation) but haven't re-run it after adding ``norman`` to your dependencies.
+
+**Solution:** Run ``nimble setup`` again in your project root.
+
+.. code-block::
+
+    $ nimble setup
+
+This updates ``nimble.paths`` to include ``norman``, allowing migrations to find it.
+
+If the error persists or you need to manually configure paths, ensure ``migrations/config.nims`` includes ``nimble.paths`` correctly:
 
 .. code-block:: nim
 
-    include "../nimble.paths"
+    when fileExists("$projectDir/../../nimble.paths"):
+      include "$projectDir/../../nimble.paths"
 
-And ensure the path to your source is correct (you may need an extra ``../``):
+And ensure the path to your source is correct:
 
 .. code-block:: nim
 
-    switch("path", "$projectDir/../../../src")
-
+    switch("path", "$projectDir/../../src")
 
 "Error: 'deepcopy' support has to be enabled"
 ---------------------------------------------

@@ -3,3 +3,7 @@
 switch("path", "$$projectDir/../../src")
 switch("hints", "off")
 switch("verbosity", "0")
+switch("deepcopy", "on")
+
+when fileExists(projectDir() & "/../../nimble.paths"):
+  include "$$projectDir/../../nimble.paths"
